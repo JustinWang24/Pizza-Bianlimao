@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartbroEcommerce</string>
+    <string name="title_sign_up">注册</string>
+    <string name="title_sign_in">登录</string>
+    <string name="text_name">姓名</string>
+    <string name="text_start">开始</string>
+    <string name="text_save">同步</string>
+    <string name="text_email">邮件</string>
+    <string name="text_address">地址</string>
+    <string name="text_phone">电话</string>
+    <string name="text_mobile">手机</string>
+    <string name="text_password">密码</string>
+    <string name="text_password_repeat">确认密码</string>
+    <string name="text_already_has_account">我已经有账户了</string>
+    <string name="text_no_account_yet">还没有账户?现在注册</string>
+    <string name="err_text_name">姓名不能为空</string>
+    <string name="err_text_email">邮件不能为空</string>
+    <string name="err_text_phone">电话不能为空</string>
+    <string name="err_text_password">密码不能为空</string>
+    <string name="err_text_password_not_match">密码不匹配</string>
+    <!-- 设备初始化界面 -->
+    <string name="init_title">设备初始化</string>
+    <string name="init_hint">设备编号</string>
+    <string name="general_confirm">确认</string>
+    <string name="err_text_sn">设备编号不可为空</string>
+    <string name="err_text_init_failed">初始化失败, 请联系厂家!</string>
+    <string name="success_text_init_ok">初始化成功!</string>
+    <string name="err_text_out_of_stock">所有披萨都卖完了, 请过一会儿再来吧亲!</string>
+    <!-- 产品列表页面 -->
+    <string name="text_machine_number">设备编号</string>
+    <string name="text_take">取货</string>
+    <string name="text_help">帮助</string>
+    <string name="text_cancel">取消</string>
+    <string name="text_cart">购物车</string>
+    <string name="text_delivery_code">取货码</string>
+    <string name="text_cart_is_empty">购物车现在是空的, 请先选择产品并添加到购物车</string>
+    <string name="text_cart_empty_text">购物车是空的, 请点击产品图片进行选择</string>
+    <string name="text_product_you_selected">您已选择: </string>
+    <string name="text_product_you_selected_after">(点击购物车进行支付)</string>
+    <!-- 商品详情页面 -->
+    <string name="text_general_back">返回</string>
+    <string name="text_add_to_cart">加入购物车</string>
+    <string name="text_quick_checkout">立即购买</string>
+    <string name="text_currency_symbol">￥</string>
+    <string name="msg_cart_is_full">购物车里已经有1张比萨饼, 无法再继续添加, 请先结账后再继续, 谢谢!</string>
+    <string name="msg_product_out_of_stock">已经没货了亲! 请选个其他种类吧!</string>
+    <!-- 购物车页面 -->
+    <string name="text_cart_title">我的购物车</string>
+    <string name="text_clear_cart">清空</string>
+    <string name="text_general_delete">删除</string>
+    <string name="text_general_select_all">全选</string>
+    <string name="text_general_deselect_all">取消全选</string>
+    <string name="text_total">合计</string>
+    <string name="text_subtotal">小计</string>
+    <string name="text_price">单价</string>
+    <string name="text_checkout">结算</string>
+    <string name="text_continue_shopping">继续购物</string>
+    <string name="text_pay_cash">现金支付</string>
+    <string name="text_pay_credit_card">信用卡支付</string>
+    <string name="text_pay_weChat">微信支付</string>
+    <string name="text_pay_Ali">支付宝</string>
+    <string name="text_pay_Apple">苹果支付</string>
+    <!-- 支付页面 -->
+    <string name="text_redeem_coupon">下一步</string>
+    <string name="text_hint_coupon">输入优惠码</string>
+    <string name="text_coupon_help">没有优惠券? 扫描一下, 立刻获取一张</string>
+    <string name="text_order_paid">支付成功, 请您耐心等待!</string>
+    <string name="text_default_change_number">找零金额: ￥</string>
+    <string name="text_all_good">顺利完成, 请取披萨, 并欢迎您再次惠顾!</string>
+    <string name="text_service_phone_number">运维小哥电话:</string>
+    <string name="text_default_making_progress">正在制作披萨 &#8230;</string>
+    <string name="text_please_take_pizza1">第</string>
+    <string name="text_please_take_pizza2">张披萨制作完成, 请取饼. 小心烫手!</string>
+    <string name="text_count_down">倒计时 </string>
+    <string name="text_pls_present_card">请刷卡</string>
+    <!-- 测试功能相关 -->
+    <string name="testing_open_serial_port1">打开COM2</string>
+    <string name="testing_open_serial_port2">打开COM3</string>
+    <string name="testing_plc">连接PLC</string>
+    <string name="testing_make_one">烤1张</string>
+    <string name="testing_make_two">烤2张</string>
+    <string name="testing_make_three">烤3张</string>
+    <string name="testing_console_title">操作结果显示终端:</string>
+    <string name="msg_need_upload_positions">库存信息被修改了, 请先同步!</string>
+    <string name="msg_no_need_upload_positions">库存信息没有更新, 无需同步操作!</string>
+    <string name="msg_done_upload_positions">库存信息同步成功!</string>
+    <string name="text_na">无产品</string>
+    <!-- 取货码 -->
+    <string name="key_delete">删除</string>
+    <string name="key_ok">确认</string>
+    <string name="text_dont_use_coupon">土豪驾到, 点击这里结账</string>
+    <!-- 帮助页 -->
+    <string name="key_leave_help">点击这里返回购物页面</string>
+</resources>

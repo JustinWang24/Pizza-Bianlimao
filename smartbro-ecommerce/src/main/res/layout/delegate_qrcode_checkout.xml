@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/mainbg">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#40000000"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="34sp" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="#20000000"
+        android:orientation="vertical"
+        android:padding="30dp"
+        >
+        <com.joanzapata.iconify.widget.IconTextView
+            android:id="@+id/icon_payment_method"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:textSize="90sp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_order_total"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.AppCompatImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/iv_qrcode_image"
+            android:layout_width="500dp"
+            android:layout_height="600dp"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            android:gravity="center" />
+
+        <!-- 取消按钮 -->
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/btn_order_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="#20000000"
+            android:orientation="vertical"
+            android:padding="20dp"
+            >
+            <com.joanzapata.iconify.widget.IconTextView
+                android:id="@+id/tv_order_cancel_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="30sp"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_order_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textColor="@color/white"
+                android:text="@string/text_cancel"
+                android:textSize="30sp"/>
+        </android.support.v7.widget.LinearLayoutCompat>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v7.widget.LinearLayoutCompat>

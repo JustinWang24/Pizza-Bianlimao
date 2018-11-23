@@ -1,0 +1,79 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile project(':Smartbro-Annotation')
+    //Android Support包
+    compile 'com.android.support:support-v4:25.4.0'
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:cardview-v7:25.4.0'
+    compile 'com.android.support:multidex:1.0.3'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0'
+    // 使用 Fragment
+    compile 'me.yokeyword:fragmentation:1.1.9'
+    compile 'me.yokeyword:fragmentation-swipeback:1.1.9'
+    // 使用 Font Awesome 图标
+    compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
+    compile 'com.joanzapata.iconify:android-iconify-ionicons:2.2.2'
+    // 引入 ButterKnife
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // 引入网络请求依赖
+    compile 'com.squareup.okio:okio:1.13.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    // 引入一个 Loading Icons的依赖 和网络请求配合
+    compile 'com.wang.avi:library:2.1.3'
+    // 引入生成Banner的依赖库
+    compile 'com.bigkoo:convenientbanner:2.0.5'
+    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+    // Json 工具 安卓版的，添加了对安卓的一些优化
+    compile 'com.alibaba:fastjson:1.1.68.android'
+    // 数据库的依赖
+    compile 'org.greenrobot:greendao-generator:3.2.2'
+    compile 'org.greenrobot:greendao:3.2.2'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    // Recycler View 依赖
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    // Recycler View的分隔线
+    compile 'com.choices.divider:RecyclerView_Divider:1.0.0'
+    // 图片处理依赖
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    compile 'com.github.bumptech.glide:okhttp3-integration:4.0.0-RC0@aar'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
+    //    compile 'com.github.bumptech.glide:glide:3.8.0'
+    //    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+    //    compile 'com.github.kongqw:AndroidSerialPort:1.0.1'
+    // 事件总线依赖
+    compile 'org.simple:androideventbus:1.0.5.1'
+}

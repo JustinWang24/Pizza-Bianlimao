@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SlideToUnlockView</string>
+    <string name="hint">Slide to Unlock</string>
+</resources>

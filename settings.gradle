@@ -1,0 +1,1 @@
+include ':app', ':pishamachine', ':Smartbro-Annotation', ':Smartbro-Compiler', ':smartbro-core', ':smartbro-ecommerce', ':smartbro-ecommerce', ':SlideToUnlockView'

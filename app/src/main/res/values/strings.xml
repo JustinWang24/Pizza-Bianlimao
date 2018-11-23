@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Pizza Ninja</string>
+    <string name="general_confirm">Confirm</string>
+    <string name="general_text_loading">Loading ...</string>
+    <string name="init_title">Initialization</string>
+    <string name="init_hint">Machine Code</string>
+    <string name="init_error_code_wrong">Error: Please enter machine code</string>
+</resources>

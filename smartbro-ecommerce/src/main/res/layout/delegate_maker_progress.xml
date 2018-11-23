@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/mainbg"
+    android:id="@+id/making_progress_layout_wrap">
+
+    <!-- 支付成功图标 -->
+    <com.joanzapata.iconify.widget.IconTextView
+        android:id="@+id/icon_payment_done"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:text="{fa-check-circle}"
+        android:textColor="@color/white"
+        android:textSize="90sp" />
+
+    <!-- 支付成功文字 -->
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_payment_success"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/text_order_paid"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <!-- 找零金额文字 -->
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_change_number_text"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/text_default_change_number"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <!-- 正在制作的产品文字 -->
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_which_product_is_making"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <!-- 客服电话 -->
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_service_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/text_service_phone_number"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+</android.support.v7.widget.LinearLayoutCompat>

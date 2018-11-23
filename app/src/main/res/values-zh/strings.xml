@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">吉客叮叮</string>
+    <string name="general_confirm">确定</string>
+    <string name="general_text_loading">正在加载...</string>
+    <string name="init_title">初始化</string>
+    <string name="init_hint">请输入机器编码</string>
+    <string name="init_error_code_wrong">发生未知错误，请重新输入机器编码</string>
+</resources>

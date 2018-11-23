@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="bluebg">#498de1</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="machinebg">#5972b0</color>
+    <color name="machinewordcolor">#7c96b8</color>
+    <color name="pizzanamecolor">#d59052</color>
+    <color name="pricecolorbg">#009246</color>
+    <color name="goodslistgraybg">#a8cae8</color>
+    <color name="helpbg">#4f4c5e</color>
+    <color name="paybg">#656798</color>
+</resources>

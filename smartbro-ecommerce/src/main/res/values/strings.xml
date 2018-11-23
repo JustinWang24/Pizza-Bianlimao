@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">SmartbroEcommerce</string>
+    <string name="title_sign_up">Sign Up</string>
+    <string name="title_sign_in">Sign In</string>
+    <string name="text_name">Name</string>
+    <string name="text_start">Start</string>
+    <string name="text_save">Save</string>
+    <string name="text_email">Email</string>
+    <string name="text_address">Address</string>
+    <string name="text_phone">Phone</string>
+    <string name="text_mobile">Mobile</string>
+    <string name="text_password">Password</string>
+    <string name="text_password_repeat">Re-Password</string>
+    <string name="text_already_has_account">I have an account</string>
+    <string name="text_no_account_yet">don\'t have an account? Sign Up</string>
+    <string name="err_text_name">Name can not be empty</string>
+    <string name="err_text_email">Email can not be empty</string>
+    <string name="err_text_phone">Phone can not be empty</string>
+    <string name="err_text_password">Password can not be empty</string>
+    <string name="err_text_password_not_match">Passwords are not match</string>
+    <!-- 设备初始化界面 -->
+    <string name="init_title">Machine Init</string>
+    <string name="init_hint">Serial Number</string>
+    <string name="general_confirm">Confirm</string>
+    <string name="err_text_sn">Serial Number can not be empty</string>
+    <string name="err_text_init_failed">Initialization Failed, Call 0413 012 206!</string>
+    <string name="success_text_init_ok">Initialized, Welcome!</string>
+    <string name="err_text_out_of_stock">This machine is out of stock!</string>
+    <!-- 产品列表页面 -->
+    <string name="text_machine_number">Machine Number</string>
+    <string name="text_take">Take</string>
+    <string name="text_help">Help</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_cart">Cart</string>
+    <string name="text_delivery_code">Order Number</string>
+    <string name="text_cart_is_empty">Shopping cart is empty, please choose a Pizza first!</string>
+    <string name="text_cart_empty_text">Cart is empty!</string>
+    <string name="text_product_you_selected">Your choice: </string>
+    <string name="text_product_you_selected_after"> </string>
+    <!-- 商品详情页面 -->
+    <string name="text_general_back">Back</string>
+    <string name="text_add_to_cart">Add To Cart</string>
+    <string name="text_quick_checkout">Checkout</string>
+    <string name="text_currency_symbol">$</string>
+    <string name="msg_cart_is_full">Your shopping cart is full, please checkout first, then continue shopping, thank you!</string>
+    <string name="msg_product_out_of_stock"> is out of stock now, please choose other Pizza!</string>
+    <!-- 购物车页面 -->
+    <string name="text_cart_title">Payment Method</string>
+    <string name="text_clear_cart">Back</string>
+    <string name="text_general_delete">Delete</string>
+    <string name="text_general_select_all">Select All</string>
+    <string name="text_general_deselect_all">Deselect All</string>
+    <string name="text_total">Total (GST Incl.): </string>
+    <string name="text_subtotal">Subtotal (GST Incl.): </string>
+    <string name="text_price">Price (GST Incl.): </string>
+    <string name="text_checkout">Checkout</string>
+    <string name="text_continue_shopping">Continue Shopping</string>
+    <string name="text_pay_cash">Cash</string>
+    <string name="text_pay_credit_card">Credit Card</string>
+    <string name="text_pay_weChat">WeChat Pay</string>
+    <string name="text_pay_Ali">AliPay</string>
+    <string name="text_pay_Apple">Apple Pay</string>
+    <!--支付界面-->
+    <string name="text_redeem_coupon">Redeem Coupon</string>
+    <string name="text_hint_coupon">Coupon Code</string>
+    <string name="text_coupon_help">No Coupon? Scan the QR code above</string>
+    <string name="text_order_paid">Payment received, Thank you!</string>
+    <string name="text_default_change_number">Change: $</string>
+    <string name="text_all_good">We hope you enjoyed your experience!</string>
+    <string name="text_service_phone_number">Contact Phone:</string>
+
+    <string name="text_default_making_progress">Making your pizza now!</string>
+    <string name="text_please_take_pizza1">Your pizza is ready now. </string>
+    <string name="text_please_take_pizza2">Please be careful take out your hot pizza!</string>
+
+    <string name="text_count_down">Expired in </string>
+
+    <string name="text_pls_present_card">Please present your card</string>
+
+    <!-- 测试功能相关 -->
+    <string name="testing_open_serial_port1">Open Port 2</string>
+    <string name="testing_open_serial_port2">Open Port 3</string>
+    <string name="testing_plc">Connect PLC</string>
+    <string name="testing_make_one">Make 1 Pizza</string>
+    <string name="testing_make_two">Make 1 Pizzas</string>
+    <string name="testing_make_three">Make 1 Pizza3</string>
+    <string name="testing_console_title">Console Monitor:</string>
+    <!-- 库存管理 -->
+    <string name="msg_need_upload_positions">You have changed the stock info, please save them first!</string>
+    <string name="msg_no_need_upload_positions">No stock info changed, you can start now!</string>
+    <string name="msg_done_upload_positions">You have saved the stock info successfully!</string>
+    <string name="text_na">N.A</string>
+    <!-- 取货码 -->
+    <string name="key_delete">DEL</string>
+    <string name="key_ok">OK</string>
+    <string name="text_dont_use_coupon">No coupon, just checkout!</string>
+    <!-- 帮助页 -->
+    <string name="key_leave_help">Continue Shopping</string>
+</resources>

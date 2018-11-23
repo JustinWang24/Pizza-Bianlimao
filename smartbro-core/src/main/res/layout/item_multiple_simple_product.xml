@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="500dp"
+    android:background="@android:color/white"
+    android:layout_margin="3dp"
+    android:id="@+id/simple_product_container"
+    android:paddingBottom="5dp"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_product_multiple"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:layout_height="240dp"
+        android:layout_weight="4">
+
+    </android.support.v7.widget.AppCompatImageView>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_product_name_multiple"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v7.widget.AppCompatTextView>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_product_price_text_multiple"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1">
+
+    </android.support.v7.widget.AppCompatTextView>
+
+</android.support.v7.widget.LinearLayoutCompat>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_stop_working"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/mainbg"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#40000000"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        android:layout_marginBottom="100dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#40000000"
+        android:paddingTop="300dp"
+        android:paddingBottom="200dp"
+        android:layout_margin="40dp"
+        android:id="@+id/relativeLayout">
+        <com.joanzapata.iconify.widget.IconTextView
+            android:id="@+id/icon_stop_working"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="{fa-power-off}"
+            android:textColor="@color/colorRed"
+            android:textSize="60sp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="34sp"
+            android:text="@string/err_text_out_of_stock"
+            android:padding="30dp"/>
+    </RelativeLayout>
+</LinearLayout>

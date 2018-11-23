@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/mainbg"
+    android:id="@+id/by_credit_checkout_layout_wrap">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="100dp"
+        android:paddingTop="100dp"
+        android:paddingBottom="100dp"
+        android:gravity="center"
+        android:background="#40000000"
+        android:id="@+id/by_credit_checkout_layout_title">
+        <com.joanzapata.iconify.widget.IconTextView
+            android:id="@+id/icon_payment_method"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:textSize="90sp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_order_total"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_card_reader_process"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:text="@string/text_pls_present_card"/>
+
+        <!-- 取消按钮 -->
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_order_cancel"
+            android:layout_width="300dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="24dp"
+            android:background="#10000000"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="@string/text_cancel"/>
+    </LinearLayout>
+</android.support.v7.widget.LinearLayoutCompat>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@mipmap/mainbg"
+    android:layout_height="match_parent"
+    android:paddingLeft="80dp"
+    android:paddingRight="80dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="20dp"
+        android:background="#40000000"
+        android:orientation="vertical"
+        android:id="@+id/ll_coupon_help_content"
+        android:gravity="center"
+        >
+
+        <android.support.v7.widget.AppCompatImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/iv_qrcode_get_coupon"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            android:gravity="center" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_coupon_help_text"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:text="@string/text_coupon_help"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="480dp">
+        <include layout="@layout/item_keypad_small"></include>
+    </LinearLayout>
+</RelativeLayout>
