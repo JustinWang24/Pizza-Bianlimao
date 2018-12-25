@@ -1,6 +1,5 @@
 package com.example.smartbroecommerce.main.product;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -149,7 +148,7 @@ public class ListDelegate extends SmartbroDelegate
 
     @Override
     public Object setLayout() {
-        return R.layout.delegate_product_list;
+        return R.layout.delegate_product_list_new;
     }
 
     @Override
