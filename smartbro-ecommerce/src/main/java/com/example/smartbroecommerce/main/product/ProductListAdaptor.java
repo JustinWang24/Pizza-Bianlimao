@@ -1,5 +1,6 @@
 package com.example.smartbroecommerce.main.product;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 
@@ -11,6 +12,7 @@ import com.example.smartbro.ui.recycler.MultipleViewHolder;
 
 import java.util.List;
 import com.example.smarbro.R;
+import com.example.smartbroecommerce.database.Product;
 
 /**
  * Created by Justin Wang from SmartBro on 13/12/17.
@@ -46,16 +48,34 @@ public class ProductListAdaptor extends MultipleRecyclerAdaptor {
         // 这里只处理产品的列表
         final View itemView = holder.itemView;
 
+        this.productListDelegate.getHolders().add(holder);
+
         /**
          * 处理点击事件: 当产品被点击后，显示高亮即可
          */
         itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                // 先把所有的产品item的UI复原
+                for (MultipleViewHolder theHolder: productListDelegate.getHolders()){
+                    theHolder.itemView.setBackgroundResource(R.drawable.product_new_item_bg);
+                    theHolder.setTextColor(R.id.tv_product_name_multiple, Color.DKGRAY);
+                    theHolder.setTextColor(R.id.tv_product_desc_multiple, Color.DKGRAY);
+                }
+
                 final int position = holder.getAdapterPosition();
                 final long productId = getData().get(position).getField(MultipleFields.ID);
-                // 加载产品详情页
-                productListDelegate.showProductDetail(productId);
+
+                /**
+                 * 获取当前选定的产品
+                 */
+                final Product product = Product.find(productId);
+                productListDelegate.setSelectedProduct(product);
+
+                // 只标记一个被选中的状态即可
+                itemView.setBackgroundResource(R.drawable.product_new_item_bg_highlight);
+                holder.setTextColor(R.id.tv_product_name_multiple, Color.WHITE);
+                holder.setTextColor(R.id.tv_product_desc_multiple, Color.WHITE);
             }
         });
     }

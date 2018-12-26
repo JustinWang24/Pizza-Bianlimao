@@ -19,4 +19,5 @@
     <color name="lightGray">#F6F5F5</color>
     <color name="weChatGreen">#7BB32E</color>
     <color name="aliPayBlue">#00A0e9</color>
+    <color name="defaultTextColor">#606060</color>
 </resources>

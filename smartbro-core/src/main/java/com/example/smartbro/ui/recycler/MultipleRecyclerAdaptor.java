@@ -1,22 +1,25 @@
 package com.example.smartbro.ui.recycler;
 
+import android.graphics.Color;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+//import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseQuickAdapter.OnItemClickListener;
 import com.example.smarbro.R;
 import com.example.smartbro.ui.banner.BannerCreator;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by Justin Wang from SmartBro on 11/12/17.
@@ -27,13 +30,18 @@ public class MultipleRecyclerAdaptor extends
         BaseMultiItemQuickAdapter<MultipleItemEntity, MultipleViewHolder>
     implements BaseQuickAdapter.SpanSizeLookup, OnItemClickListener{
 
+    /**
+     * 表示当前是否为高亮
+     */
+    private boolean isHighlighted = false;
+
+    private MultipleViewHolder holder = null;
 
     private boolean isBannerInitialized = false; // 保存是否Banner的slider已经被初始化了. 确保初始化一次，避免重复加载
 
     @Override
-    public void onItemClick(int i) {
-        // Todo Banner的图片被点击时的处理
-        Log.i("Info","Banner的图片被点击了. MultipleRecyclerAdaptor->onItemClick");
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        System.out.println("被点击了");
     }
 
     /**
@@ -76,6 +84,9 @@ public class MultipleRecyclerAdaptor extends
         final String productDescription;
         final String imageUrl; // 产品的图片
         final ArrayList<String> bannerImages;
+
+        this.holder = holder;
+
         switch (holder.getItemViewType()){
             case ItemType.TEXT_ONLY:
                 text = entity.getField(MultipleFields.TEXT);
@@ -96,7 +107,12 @@ public class MultipleRecyclerAdaptor extends
                     // 如果banner还没有被加载
                     bannerImages = entity.getField(MultipleFields.BANNERS);
                     final ConvenientBanner<String> convenientBanner = holder.getView(R.id.banner_recycler_item);
-                    BannerCreator.setDefault(convenientBanner,bannerImages,this);
+                    BannerCreator.setDefault(convenientBanner, bannerImages, new com.bigkoo.convenientbanner.listener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            // Todo: Banner 图片轮播图片的点击事件处理
+                        }
+                    });
                     this.isBannerInitialized = true;
                 }
                 break;
@@ -163,6 +179,7 @@ public class MultipleRecyclerAdaptor extends
         // 设置宽度的监听
         setSpanSizeLookup(this);
         openLoadAnimation();
+
         // 多次执行动画
         isFirstOnly(false);
     }

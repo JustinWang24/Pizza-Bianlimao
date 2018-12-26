@@ -35,7 +35,7 @@
                 android:gravity="start"
                 android:paddingLeft="24dp"
                 android:paddingTop="8dp"
-                android:textColor="#606060"
+                android:textColor="@color/defaultTextColor"
                 android:textSize="20sp"
                 android:layout_height="40dp"
                 android:layout_weight="1">
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:background="@android:color/transparent"
                 android:gravity="start"
-                android:textColor="#606060"
+                android:textColor="@color/defaultTextColor"
                 android:textSize="18sp"
                 android:paddingLeft="24dp"
                 android:layout_height="match_parent" android:layout_weight="1">

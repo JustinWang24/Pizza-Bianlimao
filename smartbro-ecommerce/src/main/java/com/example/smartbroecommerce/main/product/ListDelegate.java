@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -13,7 +14,7 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.ui.recycler.DataConvertor;
-import com.example.smartbro.ui.refresh.RefreshHandler;
+import com.example.smartbro.ui.recycler.MultipleViewHolder;
 import com.example.smartbro.utils.FastClickProtector;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
@@ -90,6 +91,16 @@ public class ListDelegate extends SmartbroDelegate
 
     private boolean cartEmptyMessageShowed = false;
 
+    /**
+     * 保存所有产品的Holder
+     */
+    private List<MultipleViewHolder> holders = new ArrayList<>();
+
+    /**
+     * 被选中的产品
+     */
+    private Product selectedProduct = null;
+
     @OnClick(R2.id.tv_page_title)
     void unlockScreen(){
         this.unlockBtnClickedCount++;
@@ -106,6 +117,14 @@ public class ListDelegate extends SmartbroDelegate
             return;
         }
         startWithPop(new DeliveryCodeDelegate());
+    }
+
+    public List<MultipleViewHolder> getHolders(){
+        return this.holders;
+    }
+
+    public void setSelectedProduct(Product product){
+        this.selectedProduct = product;
     }
 
     /*
@@ -163,6 +182,9 @@ public class ListDelegate extends SmartbroDelegate
 //            );
     }
 
+    /**
+     * 只对英文版
+     */
     private void _updateUIDisplayAttributes(){
         this.wrapper.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
         this.tvPageTitle.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
