@@ -72,7 +72,6 @@ public class ListDelegate extends SmartbroDelegate
     RecyclerView recyclerView;
 
     // 底部
-
     @BindView(R2.id.rl_help_wrap)
     RelativeLayout helpLink;
     @BindView(R2.id.rl_help_section_text)
@@ -81,11 +80,8 @@ public class ListDelegate extends SmartbroDelegate
     @BindView(R2.id.rl_delivery_code)
     RelativeLayout deliveryCodeBtn;
 
-
     private DataConvertor convertor = null;
     private ProductListAdaptor adaptor = null;
-
-    private RefreshHandler mRefreshHandler = null;
 
     // 上一次点击的时间戳
     private Timer mTimer = null;
@@ -153,7 +149,8 @@ public class ListDelegate extends SmartbroDelegate
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-        this.tvPageTitle.setText(MachineProfile.getInstance().getMachineName());
+//        this.tvPageTitle.setText(MachineProfile.getInstance().getMachineName());
+
         // 更新页面控件的显示属性
         if("en".equals(MachineProfile.getInstance().getLanguage())){
             this._updateUIDisplayAttributes();
@@ -240,14 +237,6 @@ public class ListDelegate extends SmartbroDelegate
             final BaseTimerTask task = new BaseTimerTask(this);
             this.mTimer = new Timer(true);
             this.mTimer.schedule(task,1000, 5000);
-
-            /*
-             * 中英语音播放的切换
-             */
-//            if("cn".equals(MachineProfile.getInstance().getLanguage())){
-//                MediaPlayer player = MediaPlayer.create(getActivity(),R.raw.productlist);
-//                player.start();
-//            }
         }else {
             LogUtil.LogInfo("产品列表页面中的错误检查: " + Integer.toString(errorValue));
             if(errorValue > 0){
@@ -352,7 +341,7 @@ public class ListDelegate extends SmartbroDelegate
                     if(now - lastClickActionTimeStamp > 120000){
                         mTimer.cancel();
                         mTimer = null;
-                        backToHome();
+//                        backToHome();
                     }
                 }
             }

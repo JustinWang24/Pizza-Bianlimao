@@ -40,6 +40,7 @@ public class ProductsListDataConverter extends DataConvertor {
                     .setField(MultipleFields.PRICE, product.getPrice())
                     .setField(MultipleFields.PRICE_TEXT, product.getPriceText())
                     .setField(MultipleFields.SPAN_SIZE,2)
+                    .setField(MultipleFields.PRODUCT_DESCRIPTION, product.getSummary())
                     .build();
 
             ENTITIES.add(entity);

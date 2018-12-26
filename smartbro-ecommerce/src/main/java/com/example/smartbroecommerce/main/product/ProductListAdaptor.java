@@ -21,8 +21,6 @@ public class ProductListAdaptor extends MultipleRecyclerAdaptor {
     private ListDelegate productListDelegate;
 
     /**
-     * 构造函数
-     *
      * @param data
      */
     protected ProductListAdaptor(List<MultipleItemEntity> data) {
@@ -49,7 +47,7 @@ public class ProductListAdaptor extends MultipleRecyclerAdaptor {
         final View itemView = holder.itemView;
 
         /**
-         * 处理点击事件
+         * 处理点击事件: 当产品被点击后，显示高亮即可
          */
         itemView.setOnClickListener(new View.OnClickListener(){
             @Override

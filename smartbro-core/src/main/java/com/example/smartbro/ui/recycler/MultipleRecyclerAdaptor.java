@@ -72,8 +72,9 @@ public class MultipleRecyclerAdaptor extends
     @Override
     protected void convert(MultipleViewHolder holder, MultipleItemEntity entity) {
         // 取出数据
-        final String text;
-        final String imageUrl;
+        final String text;  // 产品名称
+        final String productDescription;
+        final String imageUrl; // 产品的图片
         final ArrayList<String> bannerImages;
         switch (holder.getItemViewType()){
             case ItemType.TEXT_ONLY:
@@ -103,9 +104,12 @@ public class MultipleRecyclerAdaptor extends
                 // 对于产品类型的数据
                 text = entity.getField(MultipleFields.TEXT);
                 imageUrl = entity.getField(MultipleFields.IMAGE_URL);
+                productDescription = entity.getField(MultipleFields.PRODUCT_DESCRIPTION);
+
                 final String priceText = entity.getField(MultipleFields.PRICE_TEXT);
                 this.setTextToView(text, R.id.tv_product_name_multiple, holder);
                 this.setTextToView(priceText, R.id.tv_product_price_text_multiple, holder);
+                this.setTextToView(productDescription, R.id.tv_product_desc_multiple, holder);
                 this.setImageToView(imageUrl, R.id.image_product_multiple,holder);
                 break;
             case ItemType.PAYMENT_METHOD:
@@ -153,7 +157,7 @@ public class MultipleRecyclerAdaptor extends
         addItemType(ItemType.IMAGE_ONLY, R.layout.item_multiple_image);
         addItemType(ItemType.TEXT_PLUS_IMAGE, R.layout.item_multiple_text_plus_image);
         addItemType(ItemType.BANNER, R.layout.item_multiple_banner);
-        addItemType(ItemType.PRODUCT, R.layout.item_multiple_simple_product);       // 对于产品的布局
+        addItemType(ItemType.PRODUCT, R.layout.item_multiple_simple_product_new);       // 对于产品的布局
         addItemType(ItemType.PAYMENT_METHOD, R.layout.item_multiple_payment_method_hori);        // 对于支付方式的布局
 
         // 设置宽度的监听
