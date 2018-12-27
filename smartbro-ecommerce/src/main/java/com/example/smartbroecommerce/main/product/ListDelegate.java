@@ -29,6 +29,9 @@ import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.machine.HomeDelegate;
 import com.example.smartbroecommerce.main.cart.ShopCartDelegate;
 import com.example.smartbroecommerce.main.checkout.ByHippoAppDelegate;
+import com.example.smartbroecommerce.main.checkout.HippoIsPayingDelegate;
+import com.example.smartbroecommerce.main.checkout.HippoPaymentFailedDelegate;
+import com.example.smartbroecommerce.main.checkout.HippoPaymentSuccessDelegate;
 import com.example.smartbroecommerce.main.checkout.HippoWaitForPasswordDelegate;
 import com.example.smartbroecommerce.main.converters.ProductsListDataConverter;
 import com.example.smartbroecommerce.main.pages.DeliveryCodeDelegate;
@@ -161,8 +164,9 @@ public class ListDelegate extends SmartbroDelegate
             Bundle args = new Bundle();
             args.putLong("productId",this.selectedProduct.getId());
             ByHippoAppDelegate delegate = new ByHippoAppDelegate();
-            HippoWaitForPasswordDelegate d = new HippoWaitForPasswordDelegate();
+            HippoPaymentFailedDelegate d = new HippoPaymentFailedDelegate();
             delegate.setArguments(args);
+            d.setArguments(args);
 
             startWithPop(d);
         }

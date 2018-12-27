@@ -78,6 +78,8 @@
     <string name="text_pls_present_card">Please present your card</string>
     <string name="text_waiting_for_payment">正等待付款</string>
     <string name="text_waiting_for_password">请在您的手机APP界面输入密码</string>
+    <string name="text_is_paying">支付中&#8230;</string>
+    <string name="text_product_you_select">您选择的产品: </string>
     <!-- 测试功能相关 -->
     <string name="testing_open_serial_port1">Open Port 2</string>
     <string name="testing_open_serial_port2">Open Port 3</string>
