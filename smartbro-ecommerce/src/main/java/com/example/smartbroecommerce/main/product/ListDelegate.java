@@ -28,6 +28,8 @@ import com.example.smartbroecommerce.database.ProductDao;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.machine.HomeDelegate;
 import com.example.smartbroecommerce.main.cart.ShopCartDelegate;
+import com.example.smartbroecommerce.main.checkout.ByHippoAppDelegate;
+import com.example.smartbroecommerce.main.checkout.HippoWaitForPasswordDelegate;
 import com.example.smartbroecommerce.main.converters.ProductsListDataConverter;
 import com.example.smartbroecommerce.main.pages.DeliveryCodeDelegate;
 import com.example.smartbroecommerce.main.pages.StopWorkingDelegate;
@@ -148,16 +150,21 @@ public class ListDelegate extends SmartbroDelegate
             return;
         }
 
-        if(ShoppingCart.getInstance().isEmpty()){
-            // 购物车是空的
-            if(!this.cartEmptyMessageShowed){
-                this.cartEmptyMessageShowed = true;
-                Toast.makeText(this.getContext(),getString(R.string.text_cart_is_empty), Toast.LENGTH_SHORT).show();
-                // 这也算一次点击， 应该从新计时
-                this.updateLastClickActionTimeStamp();
-            }
+        if(this.selectedProduct == null){
+            // 没有选择产品
+            this.cartEmptyMessageShowed = true;
+            Toast.makeText(this.getContext(),getString(R.string.text_cart_is_empty), Toast.LENGTH_SHORT).show();
+            // 这也算一次点击， 应该从新计时
+            this.updateLastClickActionTimeStamp();
         }else {
-            startWithPop(new ShopCartDelegate());
+            // 跳转到支付界面
+            Bundle args = new Bundle();
+            args.putLong("productId",this.selectedProduct.getId());
+            ByHippoAppDelegate delegate = new ByHippoAppDelegate();
+            HippoWaitForPasswordDelegate d = new HippoWaitForPasswordDelegate();
+            delegate.setArguments(args);
+
+            startWithPop(d);
         }
     }
 

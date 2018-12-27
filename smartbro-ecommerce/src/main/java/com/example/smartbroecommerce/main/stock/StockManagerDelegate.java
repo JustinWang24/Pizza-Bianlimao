@@ -26,8 +26,8 @@ import com.example.smartbroecommerce.database.DatabaseManager;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.PositionDao;
-import com.example.smartbroecommerce.machine.HomeDelegate;
 import com.example.smartbroecommerce.main.converters.PositionsListDataConverter;
+import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class StockManagerDelegate extends SmartbroDelegate {
         if(this.isStockUpdated && this.changedPositions.size() > 0){
             BetterToast.getInstance().showText(getActivity(),getString(R.string.msg_need_upload_positions));
         }else {
-            startWithPop(new HomeDelegate());
+            startWithPop(new ListDelegate());
         }
     }
 

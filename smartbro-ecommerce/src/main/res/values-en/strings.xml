@@ -72,9 +72,10 @@
     <string name="text_default_making_progress">Making your pizza now!</string>
     <string name="text_please_take_pizza1">Your pizza is ready now. </string>
     <string name="text_please_take_pizza2">Please be careful take out your hot pizza!</string>
-
     <string name="text_count_down">Expired in </string>
     <string name="text_pls_present_card">Please present your card</string>
+    <string name="text_waiting_for_payment">正等待付款</string>
+    <string name="text_waiting_for_password">请在您的手机APP界面输入密码</string>
     <!-- 测试功能相关 -->
     <string name="testing_open_serial_port1">Open Port 2</string>
     <string name="testing_open_serial_port2">Open Port 3</string>
