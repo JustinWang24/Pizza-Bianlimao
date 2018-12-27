@@ -15,6 +15,7 @@ import com.example.smartbroecommerce.main.product.ListDelegate;
 
 import java.util.Date;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -91,7 +92,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
     @Override
     public Object setLayout() {
-        return R.layout.delegate_delivery_code;
+        return R.layout.delegate_delivery_code_new;
     }
 
     @Override

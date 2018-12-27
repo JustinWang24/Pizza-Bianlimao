@@ -2,9 +2,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@mipmap/mainbg"
+    android:background="@mipmap/hippo_delivery_code_bg"
     android:layout_height="match_parent"
-    android:paddingLeft="80dp"
+    android:paddingLeft="20dp"
     android:paddingRight="80dp">
 
     <TextView
@@ -14,11 +14,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="27dp"
-        android:text="请输入取货码"
-        android:textColor="@color/white"
+        android:layout_marginTop="560dp"
+        android:text="请扫码或输入取货码:"
+        android:textColor="@color/black"
         android:textSize="40sp" />
 
-    <include layout="@layout/item_keypad"></include>
+    <include layout="@layout/item_keypad_new"></include>
 
 </RelativeLayout>

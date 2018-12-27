@@ -30,7 +30,7 @@
     <string name="text_machine_number">Machine Number</string>
     <string name="text_take">Take</string>
     <string name="text_help">Help</string>
-    <string name="text_cancel">Cancel</string>
+    <string name="text_cancel">取消</string>
     <string name="text_cart">Cart</string>
     <string name="text_delivery_code">Order Number</string>
     <string name="text_cart_is_empty">Shopping cart is empty, please choose a Pizza first!</string>
@@ -92,8 +92,8 @@
     <string name="msg_done_upload_positions">You have saved the stock info successfully!</string>
     <string name="text_na">N.A</string>
     <!-- 取货码 -->
-    <string name="key_delete">DEL</string>
-    <string name="key_ok">OK</string>
+    <string name="key_delete">删除</string>
+    <string name="key_ok">确认</string>
     <string name="text_dont_use_coupon">No coupon, just checkout!</string>
     <!-- 帮助页 -->
     <string name="key_leave_help">Continue Shopping</string>
