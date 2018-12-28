@@ -10,7 +10,6 @@
     android:id="@+id/simple_product_container"
     android:paddingBottom="25dp"
     android:orientation="vertical">
-
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/image_product_multiple"
         android:layout_width="match_parent"
@@ -18,13 +17,12 @@
         android:layout_marginTop="7dp"
         android:background="@android:color/transparent"
         android:gravity="center">
-
     </android.support.v7.widget.AppCompatImageView>
-
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="20dp" android:orientation="vertical" android:layout_weight="1">
-
+        android:layout_height="20dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="20dp" android:orientation="horizontal" android:layout_weight="1">
@@ -40,7 +38,6 @@
                 android:layout_height="40dp"
                 android:layout_weight="1">
             </android.support.v7.widget.AppCompatTextView>
-
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_product_price_text_multiple"
                 android:layout_width="match_parent"
@@ -53,7 +50,6 @@
                 android:layout_weight="1">
             </android.support.v7.widget.AppCompatTextView>
         </android.support.v7.widget.LinearLayoutCompat>
-
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="20dp" android:orientation="horizontal" android:layout_weight="1">
@@ -67,8 +63,6 @@
                 android:paddingLeft="24dp"
                 android:layout_height="match_parent" android:layout_weight="1">
             </android.support.v7.widget.AppCompatTextView>
-
         </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
-
 </android.support.v7.widget.LinearLayoutCompat>

@@ -64,7 +64,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
     @OnClick(R2.id.btn_key_confirm)
     void onConfirmClick(){
-        startWithPop(new ListDelegate());
+        startWithPop(new DeliveryCodeSuccessDelegate());
     }
 
     @OnClick(R2.id.btn_key_cancel_delivery)

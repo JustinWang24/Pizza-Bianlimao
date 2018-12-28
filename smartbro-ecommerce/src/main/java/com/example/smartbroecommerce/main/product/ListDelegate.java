@@ -164,11 +164,9 @@ public class ListDelegate extends SmartbroDelegate
             Bundle args = new Bundle();
             args.putLong("productId",this.selectedProduct.getId());
             ByHippoAppDelegate delegate = new ByHippoAppDelegate();
-            HippoPaymentFailedDelegate d = new HippoPaymentFailedDelegate();
             delegate.setArguments(args);
-            d.setArguments(args);
 
-            startWithPop(d);
+            startWithPop(delegate);
         }
     }
 

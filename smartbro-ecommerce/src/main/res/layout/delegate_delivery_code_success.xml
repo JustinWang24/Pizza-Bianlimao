@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hippo_app_checkout_view_wrap"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/hippo_delivery_code_success"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_cancel_delivery"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="525dp"
+        android:gravity="center">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_toolbar_cancel_checkout_text"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="32sp" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <!-- 被选择的产品 -->
+    <android.support.v7.widget.LinearLayoutCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/product_item_black_big_bg"
+        android:layout_marginStart="300dp"
+        android:layout_marginEnd="300dp"
+        android:layout_marginTop="750dp"
+        android:id="@+id/simple_product_container"
+        android:paddingBottom="25dp"
+        android:orientation="vertical">
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image_product_multiple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:background="@android:color/transparent"
+            android:gravity="center">
+        </android.support.v7.widget.AppCompatImageView>
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tv_product_name_multiple"
+                    android:layout_width="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start"
+                    android:paddingLeft="24dp"
+                    android:paddingTop="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1">
+                </android.support.v7.widget.AppCompatTextView>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tv_product_price_text_multiple"
+                    android:layout_width="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="28sp"
+                    android:layout_height="40dp"
+                    android:paddingTop="8dp"
+                    android:layout_weight="1">
+                </android.support.v7.widget.AppCompatTextView>
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="20dp" android:orientation="horizontal" android:layout_weight="1">
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tv_product_desc_multiple"
+                    android:layout_width="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:paddingLeft="24dp"
+                    android:layout_height="match_parent" android:layout_weight="1">
+                </android.support.v7.widget.AppCompatTextView>
+            </android.support.v7.widget.LinearLayoutCompat>
+        </android.support.v7.widget.LinearLayoutCompat>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <!-- 立即取货按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="1200dp">
+        <Button
+            android:id="@+id/btn_key_confirm_delivery_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/hippo_delivery_success_button"
+            android:gravity="center" />
+    </LinearLayout>
+
+</RelativeLayout>

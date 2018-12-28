@@ -6,7 +6,6 @@
     android:background="@mipmap/bianlimao_main_bg1"
     android:gravity="center"
     android:orientation="vertical">
-
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_page_title"
         android:layout_width="match_parent"
@@ -15,26 +14,21 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textSize="34sp" />
-
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/dp_40"
         android:paddingRight="@dimen/dp_40">
-
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/srl_products_listing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="630dp">
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_products_listing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
-
     </android.support.design.widget.CoordinatorLayout>
-
     <include layout="@layout/layout_product_list_bottom_new" />
 </RelativeLayout>
