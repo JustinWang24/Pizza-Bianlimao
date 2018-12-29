@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hippo_app_checkout_view_wrap"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -43,14 +44,22 @@
         android:id="@+id/simple_product_container"
         android:paddingBottom="25dp"
         android:orientation="vertical">
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/image_product_multiple"
+        <!-- 左上和右上为圆角的图片 -->
+        <com.makeramen.roundedimageview.RoundedImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/image_product_multiple_round_corner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:background="@android:color/transparent"
-            android:gravity="center">
-        </android.support.v7.widget.AppCompatImageView>
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:gravity="center"
+            android:scaleType="center"
+            app:riv_corner_radius_top_left="20dip"
+            app:riv_corner_radius_top_right="20dip"
+            app:riv_border_width="3dip"
+            />
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="20dp"

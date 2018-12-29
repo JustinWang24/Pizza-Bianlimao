@@ -1,7 +1,5 @@
 package com.example.smartbroecommerce.Auth;
 
-import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -12,15 +10,7 @@ import com.example.smartbroecommerce.database.PaymentMethod;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ShoppingCartItem;
-//import com.example.smartbroecommerce.database.Product;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by Justin Wang from SmartBro on 6/12/17.
@@ -64,15 +54,16 @@ public class MachineInitHandler {
         final String operatorId = machineJson.getString("operatorId");
         final String currencySymbol = machineJson.getString("currencySymbol");
         final String language = machineJson.getString("language");
+        final String hippoAppId = machineJson.getString("hippoAppId");
+        final String hippoApiVersion = machineJson.getString("hippoApiVersion");
         final boolean supportCoupon = machineJson.getBoolean("support_coupon");
 
         final int maxProductsToSellOneTime = machineJson.getInteger("max_cups_one_time");
         final int multiple = machineJson.getInteger("multiple");
 
-
         final MachineProfile machineProfile = new MachineProfile(
                 machineId,uuid,machineName,machinePhone,serialName,
-                operatorName,operatorId,currencySymbol,language,maxProductsToSellOneTime, multiple,supportCoupon
+                operatorName,operatorId,currencySymbol,language,hippoAppId,hippoApiVersion,maxProductsToSellOneTime, multiple,supportCoupon
         );
 
         // 持久化设备的数据表
@@ -104,12 +95,14 @@ public class MachineInitHandler {
             JSONObject productJson = (JSONObject)iterator.next();
 
             long id = productJson.getLong("id");
+            String itemId = productJson.getString("itemId");
             String name = productJson.getString("name");
             String mainImageUrl = productJson.getString("mainImageUrl");
             String summary = productJson.getString("summary");
             double price = productJson.getDouble("price");
+            double listPrice = productJson.getDouble("listPrice");
 
-            Product product = new Product(id,name,summary,mainImageUrl,price);
+            Product product = new Product(id,itemId,name,summary,mainImageUrl,price,listPrice);
             DatabaseManager.getInstance().getProductDao().insert(product);
         }
 

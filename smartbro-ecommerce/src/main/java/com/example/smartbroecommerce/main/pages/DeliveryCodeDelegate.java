@@ -57,7 +57,6 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private Timer timer = null;
     private long openTime = 0;
 
-
     @OnClick(R2.id.btn_key_confirm)
     void onConfirmClick(){
         startWithPop(new DeliveryCodeSuccessDelegate());

@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -243,6 +244,7 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     @OnClick(R2.id.btn_confirm_init)
     void onClickInitMachine(){
         if(this.validate()){
+//            getProxyActivity().deleteDatabase("pizza_box.db");
             // 如果输入的设备串号符合要求, 那么就提交给服务器进行验证
             RestfulClient.builder()
                 .url("machines/init")
@@ -250,9 +252,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
                 .success(new ISuccess() {
                     @Override
                     public void onSuccess(String response) {
-                    // 设备初始化成功, 把服务器返回结果与认证的监听类对象传给handler去处理
-                    MachineInitHandler.onInitDone(response, iAuthListener);
-                    checkIsMachineInitialized();
+                        Log.i("Info",response);
+
+                        // 设备初始化成功, 把服务器返回结果与认证的监听类对象传给handler去处理
+                        MachineInitHandler.onInitDone(response, iAuthListener);
+                        checkIsMachineInitialized();
                     }
                 })
                 .failure(new IFailure() {

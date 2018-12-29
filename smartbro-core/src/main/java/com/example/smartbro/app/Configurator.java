@@ -87,6 +87,16 @@ public class Configurator {
     }
 
     /**
+     * 配置本机的便利猫 APP ID
+     * @param hippoAppId 本机的便利猫 APP ID
+     * @return Configurator
+     */
+    public final Configurator withHippoAppId(String hippoAppId){
+        SMARTBRO_CONFIGS.put(ConfigType.HIPPO_APP_ID.name(), hippoAppId);
+        return this;
+    }
+
+    /**
      * 配置默认的下载路径的方法
      * @param path 下载文件的保存路径
      * @return Configurator

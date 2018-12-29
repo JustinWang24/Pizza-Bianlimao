@@ -31,6 +31,7 @@ public class RestfulClient {
 
     public static final int NO_ERROR = 100;
     public static final String STATUS_OK = "ok";
+    public static final String HIPPO_APP_VERSION = "1.0";
 
     private final String URL;
     private static final WeakHashMap<String, Object> PARAMS = RestfulCreator.getParams();
@@ -73,13 +74,16 @@ public class RestfulClient {
     }
 
     /**
-     * 返回 Restful的 Client的builder, 同时在参数中加入版本号
+     * 返回 Restful的 Client的builder, 同时在参数中加入版本号; 还有便利猫App的version
      * @return RestfulClientBuilder
      */
     public static RestfulClientBuilder builder() {
         return new RestfulClientBuilder().params(
                 "_version",
                 (String) Smartbro.getConfigurationsMap().get(ConfigType.VERSION.name())
+        ).params(
+                "appVersion",
+                HIPPO_APP_VERSION
         );
     }
 

@@ -52,5 +52,10 @@ public enum ConfigType {
     /**
      * 用到的icons
      */
-    ICON
+    ICON,
+
+    /**
+     * 设置便利猫的APP ID
+     */
+    HIPPO_APP_ID
 }

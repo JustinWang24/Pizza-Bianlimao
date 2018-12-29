@@ -22,15 +22,17 @@ public class MachineProfile {
     private String operatorId = null;           // 那个经销商的ID
     private String currencySymbol = null;       // 设备的货币符号
     private String language = null;             // 设备运行的语言 （在pizza机没用）
+    private String hippoAppId = null;           // 便利猫App ID
+    private String hippoApiVersion = "1.0";     // 便利猫API的版本号 默认使用 1.0
     private int maxProductsToSellOneTime = 1;   // 一次最多可以卖几个产品
     private int multiple = 1;                   // 投币器的放大倍数，默认为1 不放大
     private boolean supportCoupon = false;      // 是否本机支持优惠码
 
-    @Generated(hash = 1584803101)
+    @Generated(hash = 150276393)
     public MachineProfile(long id, String uuid, String machineName, String machinePhone,
             String serialName, String operatorName, String operatorId, String currencySymbol,
-            String language, int maxProductsToSellOneTime, int multiple,
-            boolean supportCoupon) {
+            String language, String hippoAppId, String hippoApiVersion,
+            int maxProductsToSellOneTime, int multiple, boolean supportCoupon) {
         this.id = id;
         this.uuid = uuid;
         this.machineName = machineName;
@@ -40,6 +42,8 @@ public class MachineProfile {
         this.operatorId = operatorId;
         this.currencySymbol = currencySymbol;
         this.language = language;
+        this.hippoAppId = hippoAppId;
+        this.hippoApiVersion = hippoApiVersion;
         this.maxProductsToSellOneTime = maxProductsToSellOneTime;
         this.multiple = multiple;
         this.supportCoupon = supportCoupon;
@@ -189,6 +193,22 @@ public class MachineProfile {
 
     public void setSupportCoupon(boolean supportCoupon) {
         this.supportCoupon = supportCoupon;
+    }
+
+    public String getHippoAppId() {
+        return this.hippoAppId;
+    }
+
+    public void setHippoAppId(String hippoAppId) {
+        this.hippoAppId = hippoAppId;
+    }
+
+    public String getHippoApiVersion() {
+        return this.hippoApiVersion;
+    }
+
+    public void setHippoApiVersion(String hippoApiVersion) {
+        this.hippoApiVersion = hippoApiVersion;
     }
 
     

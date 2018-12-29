@@ -1,13 +1,10 @@
 package com.example.smartbro.ui.recycler;
 
-import android.graphics.Color;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
-//import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -20,7 +17,6 @@ import com.example.smartbro.ui.banner.BannerCreator;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Created by Justin Wang from SmartBro on 11/12/17.
  * 渲染列表的UI的基础类, 和 MultipleViewHolder 结合使用
@@ -30,12 +26,7 @@ public class MultipleRecyclerAdaptor extends
         BaseMultiItemQuickAdapter<MultipleItemEntity, MultipleViewHolder>
     implements BaseQuickAdapter.SpanSizeLookup, OnItemClickListener{
 
-    /**
-     * 表示当前是否为高亮
-     */
-    private boolean isHighlighted = false;
-
-    private MultipleViewHolder holder = null;
+//    private MultipleViewHolder holder = null;
 
     private boolean isBannerInitialized = false; // 保存是否Banner的slider已经被初始化了. 确保初始化一次，避免重复加载
 
@@ -85,7 +76,7 @@ public class MultipleRecyclerAdaptor extends
         final String imageUrl; // 产品的图片
         final ArrayList<String> bannerImages;
 
-        this.holder = holder;
+//        this.holder = holder;
 
         switch (holder.getItemViewType()){
             case ItemType.TEXT_ONLY:
@@ -126,7 +117,8 @@ public class MultipleRecyclerAdaptor extends
                 this.setTextToView(text, R.id.tv_product_name_multiple, holder);
                 this.setTextToView(priceText, R.id.tv_product_price_text_multiple, holder);
                 this.setTextToView(productDescription, R.id.tv_product_desc_multiple, holder);
-                this.setImageToView(imageUrl, R.id.image_product_multiple,holder);
+//                this.setImageToView(imageUrl, R.id.image_product_multiple,holder);
+                this.setImageToView(imageUrl, R.id.image_product_multiple_round_corner,holder);
                 break;
             case ItemType.PAYMENT_METHOD:
 

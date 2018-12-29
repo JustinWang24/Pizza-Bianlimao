@@ -20,6 +20,7 @@
     <string name="err_text_password_not_match">Passwords are not match</string>
     <!-- 设备初始化界面 -->
     <string name="init_title">Machine Init</string>
+    <string name="init_app_hint">APP ID</string>
     <string name="init_hint">Serial Number</string>
     <string name="general_confirm">Confirm</string>
     <string name="err_text_sn">Serial Number can not be empty</string>

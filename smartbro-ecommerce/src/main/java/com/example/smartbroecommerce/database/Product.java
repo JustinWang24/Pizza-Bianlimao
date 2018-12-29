@@ -20,10 +20,12 @@ import org.greenrobot.greendao.DaoException;
 public class Product {
     @Id
     private long id = 0;                   // 在系统中的ID
+    private String itemId = null;          // 产品的 itemId
     private String name = null;            // 产品的名称
     private String summary = null;         // 产品的简述
     private String mainImageUrl = null;    // 产品图片的URL
     private double price = 0;              // 产品的最新价格
+    private double listPrice = 0;          // 产品的原始价格
 
     // 一个产品对应了多个保存的位置
     @ToMany(referencedJoinProperty = "productId")
@@ -37,13 +39,16 @@ public class Product {
     private transient ProductDao myDao;
 
 
-    @Generated(hash = 1805643513)
-    public Product(long id, String name, String summary, String mainImageUrl, double price) {
+    @Generated(hash = 2097743201)
+    public Product(long id, String itemId, String name, String summary, String mainImageUrl,
+            double price, double listPrice) {
         this.id = id;
+        this.itemId = itemId;
         this.name = name;
         this.summary = summary;
         this.mainImageUrl = mainImageUrl;
         this.price = price;
+        this.listPrice = listPrice;
     }
 
     @Generated(hash = 1890278724)
@@ -224,6 +229,22 @@ public class Product {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public String getItemId() {
+        return this.itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    public double getListPrice() {
+        return this.listPrice;
+    }
+
+    public void setListPrice(double listPrice) {
+        this.listPrice = listPrice;
     }
 
     /** called by internal mechanisms, do not call yourself. */

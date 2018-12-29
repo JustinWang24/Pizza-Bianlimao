@@ -21,6 +21,7 @@
     <string name="err_text_password_not_match">密码不匹配</string>
     <!-- 设备初始化界面 -->
     <string name="init_title">设备初始化</string>
+    <string name="init_app_hint">便利猫APP ID</string>
     <string name="init_hint">设备编号</string>
     <string name="general_confirm">确认</string>
     <string name="err_text_sn">设备编号不可为空</string>

@@ -76,4 +76,7 @@ dependencies {
     //    compile 'com.github.kongqw:AndroidSerialPort:1.0.1'
     // 事件总线依赖
     compile 'org.simple:androideventbus:1.0.5.1'
+    // 实现图片圆角
+//    compile 'de.hdodenhof:circleimageview:2.2.0'
+    compile 'com.makeramen:roundedimageview:2.3.0'
 }

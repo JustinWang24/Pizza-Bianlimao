@@ -25,8 +25,8 @@ public class MyApp extends Application{
          * 初始化并加载系统的配置信息
          */
         Smartbro.init(this)
-                .withApiHost("http://boss.htlc-kj.com/api/")
-//                .withApiHost("http://htlc.smartbro.com.au/api/")
+//                .withApiHost("http://boss.htlc-kj.com/api/")
+                .withApiHost("http://htlc.smartbro.com.au/api/")
 //                .withApiHost("http://rap.taobao.org/mockjsdata/20889/api/")
 //                .withApiHost("http://pizzabox.htlc-kj.com/")
                 .withIcon(new FontAwesomeModule())
@@ -36,7 +36,7 @@ public class MyApp extends Application{
 //                .withInterceptor(new DebugInterceptor("index", R.raw.test))
                 .configDone();
         DatabaseManager.getInstance().init(this);
-//        this.initStetho();
+        this.initStetho();
     }
 
     private void initStetho(){
