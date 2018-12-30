@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -21,26 +20,20 @@ import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.DatabaseManager;
-import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ProductDao;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.machine.HomeDelegate;
-import com.example.smartbroecommerce.main.cart.ShopCartDelegate;
 import com.example.smartbroecommerce.main.checkout.ByHippoAppDelegate;
-import com.example.smartbroecommerce.main.checkout.HippoIsPayingDelegate;
-import com.example.smartbroecommerce.main.checkout.HippoPaymentFailedDelegate;
-import com.example.smartbroecommerce.main.checkout.HippoPaymentSuccessDelegate;
-import com.example.smartbroecommerce.main.checkout.HippoWaitForPasswordDelegate;
 import com.example.smartbroecommerce.main.converters.ProductsListDataConverter;
 import com.example.smartbroecommerce.main.pages.DeliveryCodeDelegate;
 import com.example.smartbroecommerce.main.pages.StopWorkingDelegate;
 import com.example.smartbroecommerce.main.pages.UnlockScreenDelegate;
-import com.example.smartbroecommerce.utils.ColorHelper;
 
 import com.joanzapata.iconify.widget.IconTextView;
 import com.taihua.pishamachine.LogUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -177,35 +170,11 @@ public class ListDelegate extends SmartbroDelegate
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-//        this.tvPageTitle.setText(MachineProfile.getInstance().getMachineName());
-
-        // 更新页面控件的显示属性
-        if("en".equals(MachineProfile.getInstance().getLanguage())){
-            this._updateUIDisplayAttributes();
-        }
-
         // Todo 页面下拉时候的处理
 //        this.mRefreshHandler = RefreshHandler
 //            .create(
 //                    this.refreshLayout,this.recyclerView,new ProductsListDataConverter(),null
 //            );
-    }
-
-    /**
-     * 只对英文版
-     */
-    private void _updateUIDisplayAttributes(){
-        this.wrapper.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
-        this.tvPageTitle.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-
-        // 购物车
-        this.shoppingCartLayout.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-        this.shoppingCartIcon.setTextColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-        this.circleTextView.setTextColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-        this.circleTextView.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-        this.shoppingCartText.setTextColor(ColorHelper.GetColorIntValueByName("black",getResources()));
-
-        this.helpLink.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
     }
 
     /**

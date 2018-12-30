@@ -145,7 +145,7 @@
             android:gravity="center"
             android:layout_marginTop="10dp">
             <Button
-                android:id="@+id/btn_key_delete"
+                android:id="@+id/btn_key_hash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/hippo_delivery_code_button"
@@ -153,7 +153,7 @@
                 android:textSize="60sp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/white"
-                android:text="@string/key_delete"/>
+                android:text="#"/>
             <Button
                 android:id="@+id/btn_key0"
                 android:layout_width="wrap_content"
@@ -164,8 +164,9 @@
                 android:textColor="@color/white"
                 android:paddingBottom="8dp"
                 android:text="0"/>
+
             <Button
-                android:id="@+id/btn_key_confirm"
+                android:id="@+id/btn_key_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/hippo_delivery_code_button"
@@ -173,7 +174,7 @@
                 android:textSize="60sp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/white"
-                android:text="@string/key_ok"/>
+                android:text="@string/key_delete"/>
         </LinearLayout>
 
         <LinearLayout
@@ -182,18 +183,30 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:paddingLeft="@dimen/dp_10">
+            android:layout_marginStart="10dp">
             <Button
                 android:id="@+id/btn_key_cancel_delivery"
-                android:layout_width="540dp"
+                android:layout_width="256dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/hippo_delivery_code_button"
                 android:gravity="center"
                 android:textSize="60sp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/white"
-                android:text="@string/text_cancel"/>
+                android:layout_marginEnd="12dp"
+                android:text="@string/text_cancel"
+            />
+            <Button
+                android:id="@+id/btn_key_confirm"
+                android:layout_width="256dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/hippo_delivery_code_button"
+                android:gravity="center"
+                android:textSize="60sp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/white"
+                android:text="@string/key_ok"
+            />
         </LinearLayout>
     </LinearLayout>
 

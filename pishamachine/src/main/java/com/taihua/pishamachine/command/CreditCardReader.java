@@ -16,8 +16,6 @@ public class CreditCardReader {
     public static int KEEP_ALIVE_DONE       = 1002;      // 设置Keep Alive 完成
     public static int KEEP_ALIVE_FAILED     = 1003;      // 设置Keep Alive 失败
 
-
-
     public static byte[] getEnableCommand(){
         /**
          *  0B 00 01 2F 01 53 00 30 80 14 01 CD 5D

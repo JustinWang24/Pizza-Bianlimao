@@ -2,6 +2,7 @@ package com.example.smartbroecommerce.main.pages;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.main.product.ListDelegate;
+import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
+
 import java.util.Date;
 import java.util.Timer;
 import butterknife.BindView;
@@ -45,6 +48,8 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     Button btnKey8 = null;
     @BindView(R2.id.btn_key9)
     Button btnKey9 = null;
+    @BindView(R2.id.btn_key_hash)
+    Button btnKeyHash = null;
 
     @BindView(R2.id.btn_key_confirm)
     Button btnKeyConfirm = null;
@@ -59,7 +64,12 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
     @OnClick(R2.id.btn_key_confirm)
     void onConfirmClick(){
-        startWithPop(new DeliveryCodeSuccessDelegate());
+        // 判断是否为特殊的维护码
+        if ( "#111".equals(this.deliveryCode.getText().toString()) ){
+            startWithPop(new StockManagerDelegate());
+        }else{
+            startWithPop(new DeliveryCodeSuccessDelegate());
+        }
     }
 
     @OnClick(R2.id.btn_key_cancel_delivery)
@@ -158,5 +168,9 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     @OnClick(R2.id.btn_key9)
     void onKey9Click(){
         this.handleClick(this.btnKey9);
+    }
+    @OnClick(R2.id.btn_key_hash)
+    void onKeyHashClick(){
+        this.handleClick(this.btnKeyHash);
     }
 }

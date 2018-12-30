@@ -30,7 +30,12 @@ import com.example.smartbroecommerce.container.ContainerConfig;
 import com.example.smartbroecommerce.main.maker.PizzaMakerHandler;
 import com.taihua.pishamachine.CashierManager;
 import com.taihua.pishamachine.CashierMessage;
+import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
+import com.taihua.pishamachine.MicroLightScanner.ScannerCommand;
+import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 import com.taihua.pishamachine.PishaMachineManager;
+import com.taihua.pishamachine.command.CommandHelper;
+
 import java.util.Date;
 
 import butterknife.BindView;
@@ -56,25 +61,22 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     // 读卡器测试
     @BindView(R2.id.btn_open_reader_keep_alive)
-    AppCompatButton openAndKeepAliveBtn = null;
-    @BindView(R2.id.btn_reader_select_product)
-    AppCompatButton selectProductButton = null;
-    @BindView(R2.id.btn_reader_take_product)
-    AppCompatButton takeProductButton = null;
+    AppCompatButton openAndKeepAliveBtn = null; // 使能扫描枪
     @BindView(R2.id.btn_reader_close)
-    AppCompatButton closeReaderButton = null;
+    AppCompatButton closeReaderButton = null;   // 禁能扫描枪
 
     @BindView(R2.id.tv_console)
     TextView console = null;
 
     private PishaMachineManager pishaMachineManager = null;
 
+    private Tx200Client tx200Client = null;
+
     /**
      * 需要一个Android的handler来在Loader消失的时候加上一些延时
      * Handler声明为 static 类型， 避免内存泄漏
      */
     // 测试相关声明结束
-
 
     private IAuthListener iAuthListener = null;
     private ILauncherListener iLauncherListener = null;
@@ -105,19 +107,45 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     @OnClick(R2.id.btn_open_reader_keep_alive)
     void openAndKeepAliveClicked(){
+        Log.i("Info","扫描枪 使能开始");
+        final byte[] cmd1 = ScannerCommand.GetSetPassiveModeCmd();
+        Log.i("Info", "命令模式: " + CommandHelper.bytesToHexString(cmd1, cmd1.length));
+        final byte[] cmd2 = ScannerCommand.GetReadQrCodeCommand();
+        Log.i("Info", "获取扫描结果: " + CommandHelper.bytesToHexString(cmd2, cmd2.length));
+        final byte[] cmd3 = ScannerCommand.GetSetPositiveModeCmd();
+        Log.i("Info", "主动模式: " + CommandHelper.bytesToHexString(cmd3, cmd3.length));
 
+        final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
+        Log.i("Info", "二维码: " + QrCodeString);
     }
 
     @OnClick(R2.id.btn_reader_close)
     void closeReaderBtnClicked(){
-    }
+        Log.i("Info","扫描枪 禁能开始");
+        final byte[] cmd = ScannerCommand.GetClearCodeCmd();
+        Log.i("Info", "禁能: " + CommandHelper.bytesToHexString(cmd, cmd.length));
 
-    @OnClick(R2.id.btn_reader_select_product)
-    void selectProductClicked(){
-    }
-
-    @OnClick(R2.id.btn_reader_take_product)
-    void takeProductButtonClicked(){
+        // 检查解析QR
+//        final byte[] readBuffer = {
+//                0x55, (byte)0xAA, 0x30,
+//                0x00,       // 标识字:一字节， 0x00则代表成功应答，其它失败或错误
+//                0x22, 0x00, // 两字节，指明本条命令从长度字后面开始到校验字的字节数(不含效验字)，低位在前
+//                // 数据域开始
+//                0x30, 0x31,0x44,0x47,0x35,
+//                0x30, 0x4B,0x58,0x59,0x41,
+//                0x56, 0x51,0x45,0x46,0x44,
+//                0x67, 0x4D,0x47,0x44,0x41,
+//                0x45, 0x2F,0x37,0x6B,0x47,
+//                0x46, 0x4A,0x74,0x6F,0x31,
+//                0x78, 0x69,0x61,0x72,
+//                // 数据域结束
+//                (byte)0x9C  // BCC校验字
+//        };
+//        final String expecting = "01DG50KXYAVQEFDgMGDAE/7kGFJto1xiar";
+//        final String QrCode = QrCodeParserImpl.bytesToAsciiString(readBuffer).toString();
+//        Log.i("Info", "二维码: " + QrCode);
+//        Log.i("Info", "期待结果: " + expecting);
+//        Log.i("Info", Boolean.toString(expecting.equals(QrCode)));
     }
 
     @Override
@@ -278,7 +306,7 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     @Override
     public Object setLayout() {
 
-        return R.layout.delegate_machine_init;
+        return R.layout.delegate_machine_init_new;
     }
 
     @Override
