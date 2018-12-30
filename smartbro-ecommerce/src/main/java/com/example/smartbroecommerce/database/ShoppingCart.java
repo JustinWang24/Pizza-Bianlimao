@@ -1,9 +1,6 @@
 package com.example.smartbroecommerce.database;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.util.Log;
-
 import com.example.smartbro.app.Smartbro;
 import com.example.smartbro.delegates.BaseDelegate;
 import com.example.smartbroecommerce.R;
@@ -25,7 +22,8 @@ public class ShoppingCart {
     private static final ShoppingCartItemDao SHOPPING_CART_ITEM_DAO = DatabaseManager.getInstance().getShoppingCartItemDao();
     private static final ProductDao PRODUCT_DAO = DatabaseManager.getInstance().getProductDao();
     // 购物车的产品容量
-    private static final int VOLUME = MachineProfile.getShoppingCartVolumn();
+    private static final int VOLUME = 1;
+//    private static final int VOLUME = MachineProfile.getShoppingCartVolumn();
 
     private ShoppingCart(){
         // 加载购物车的数据
@@ -225,6 +223,11 @@ public class ShoppingCart {
      */
     public int addProduct(@NonNull Product product, BaseDelegate delegate){
         // 先检查是否购物车已经满了
+        if(!this.hasMoreSpace()){
+            // 如果购物车中已经有产品了，那么就清空
+            this.clear();
+        }
+
         if(this.hasMoreSpace()){
             // 在检查是否有库存
             Position position = Position.getPositionByProduct(product);

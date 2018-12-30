@@ -70,7 +70,7 @@
     <string name="text_default_change_number">找零金额: ￥</string>
     <string name="text_all_good">顺利完成, 请取披萨, 并欢迎您再次惠顾!</string>
     <string name="text_service_phone_number">运维小哥电话:</string>
-    <string name="text_default_making_progress">正在制作披萨 &#8230;</string>
+    <string name="text_default_making_progress">您的披萨正在火热制作中``</string>
     <string name="text_please_take_pizza1">第</string>
     <string name="text_please_take_pizza2">张披萨制作完成, 请取饼. 小心烫手!</string>
     <string name="text_count_down">倒计时 </string>

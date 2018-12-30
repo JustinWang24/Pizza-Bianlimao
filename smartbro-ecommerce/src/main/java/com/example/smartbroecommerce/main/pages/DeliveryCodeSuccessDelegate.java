@@ -15,6 +15,8 @@ import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.Product;
+import com.example.smartbroecommerce.database.ShoppingCart;
+import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 
 import butterknife.BindView;
@@ -24,7 +26,8 @@ import butterknife.OnClick;
  * Created by Justin Wang from SmartBro on 28/12/18.
  */
 public class DeliveryCodeSuccessDelegate extends SmartbroDelegate {
-    private Product product = null;
+    private Product product = null;     // 准备要烤的产品对象
+    private String deliveryCode = null; // 传递过来的 自提码
 
     @BindView(R2.id.tv_toolbar_cancel_checkout_text)
     AppCompatTextView toolbarCancelDeliveryButton;
@@ -53,7 +56,24 @@ public class DeliveryCodeSuccessDelegate extends SmartbroDelegate {
 
     @OnClick(R2.id.btn_key_confirm_delivery_success)
     void onDeliveryConfirmButtonClicked(){
-        Log.i("Info","Delivery confirmed");
+        // 点击确认取货按钮后的处理
+        Bundle args = new Bundle();
+        args.putString("itemId", this.product.getItemId());
+        args.putString("deliveryCode", this.deliveryCode);
+
+        //
+        args.putInt("orderId",1);
+        args.putBoolean("needCallBakingCmd",true);
+
+        //
+        SmartbroDelegate delegate = new ProcessingDelegate();
+        delegate.setArguments(args);
+
+        // 往购物车中添加一个产品
+        ShoppingCart.getInstance().addProduct(this.product, delegate);
+
+        // 加载视图
+        startWithPop(delegate);
     }
 
     @Override
@@ -61,11 +81,17 @@ public class DeliveryCodeSuccessDelegate extends SmartbroDelegate {
         return R.layout.delegate_delivery_code_success;
     }
 
+    /**
+     * 根据传入的 itemId 显示产品的信息
+     * @param savedInstanceState
+     * @param rootView
+     */
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-
         Bundle args = getArguments();
         this.product = Product.find(args.getString("itemId"));
+        this.deliveryCode = args.getString("deliveryCode");
+
         if(this.product != null){
             this.productNameTextView.setText(this.product.getName());
             this.productPriceTextView.setText("¥ " + this.product.getPrice());

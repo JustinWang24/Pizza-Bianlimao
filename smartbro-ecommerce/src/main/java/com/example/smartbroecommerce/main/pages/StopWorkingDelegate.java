@@ -28,28 +28,14 @@ public class StopWorkingDelegate extends SmartbroDelegate implements ITimerListe
     private long lastTimeUnlockBtnClicked = 0;
     private Timer mTimer = null;
 
-    @BindView(R2.id.tv_page_title)
-    AppCompatTextView tvPageTitle = null;
-
-    @OnClick(R2.id.tv_page_title)
-    void unlockScreen(){
-//        this.unlockBtnClickedCount++;
-//        this.lastTimeUnlockBtnClicked = new Date().getTime();
-//
-//        if(this.unlockBtnClickedCount > 6){
-//            startWithPop(new UnlockScreenDelegate());
-//        }
-    }
-
     @Override
     public Object setLayout() {
-        return R.layout.delegate_stop_working;
+        return R.layout.delegate_stop_working_new;
     }
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         this.lastTimeUnlockBtnClicked = 0;
-        this.tvPageTitle.setText(MachineProfile.getInstance().getMachineName());
     }
 
     @Override

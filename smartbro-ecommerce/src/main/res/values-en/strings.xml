@@ -70,7 +70,7 @@
     <string name="text_all_good">We hope you enjoyed your experience!</string>
     <string name="text_service_phone_number">Contact Phone:</string>
 
-    <string name="text_default_making_progress">Making your pizza now!</string>
+    <string name="text_default_making_progress">您的披萨正在火热制作中``</string>
     <string name="text_please_take_pizza1">Your pizza is ready now. </string>
     <string name="text_please_take_pizza2">Please be careful take out your hot pizza!</string>
     <string name="text_count_down">Expired in </string>

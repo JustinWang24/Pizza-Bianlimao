@@ -20,30 +20,19 @@
             android:id="@+id/making_pizza_animation_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@mipmap/machine_down"
+            android:background="@mipmap/making_pizza_in_progress"
             >
         </pl.droidsonroids.gif.GifImageView>
     </android.support.v7.widget.LinearLayoutCompat>
 
     <!-- 正在制作的产品文字 -->
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_note_1"
+        android:id="@+id/tv_which_product_is_making"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="120dp"
+        android:layout_height="300dp"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="36sp"
-        android:textStyle="bold"
-        android:text="如果您已付款, 设备未出货"/>
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_note_2"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:text="请打开盒马APP申请退款"/>
+        android:textStyle="bold" />
 
 </android.support.v7.widget.LinearLayoutCompat>

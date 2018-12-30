@@ -78,7 +78,11 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
         // 判断是否为特殊的维护码
         final String codeString = this.deliveryCode.getText().toString();
         if ( "#111".equals(codeString) ){
+            // 上货密码
             startWithPop(new StockManagerDelegate());
+        }else if("#222".equals(codeString)){
+            // 暂停设备运行密码
+            startWithPop(new StopWorkingDelegate());
         }else{
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));
@@ -96,7 +100,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
                         @Override
                         public void onSuccess(String response) {
                             // 网络通信成功
-                            onCheckCodeSuccess(response);
+                            onCheckCodeSuccess(response, codeString);
                         }
                     })
                     .failure(new IFailure() {
@@ -111,8 +115,9 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     /**
      * 检查自提码的网络调用成功
      * @param response 服务器返回的字符串形式的处理结果
+     * @param deliveryCode 服务器返回的字符串形式的处理结果
      */
-    private void onCheckCodeSuccess(String response){
+    private void onCheckCodeSuccess(String response, String deliveryCode){
         final JSONObject res = JSON.parseObject(response);
         final int errorNo = res.getInteger("error_no");
         final String itemId = res.getString("p");
@@ -126,7 +131,9 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
             // 跳转到确认支付页面
             Bundle args = new Bundle();
-            args.putString("itemId",itemId);
+            args.putString("itemId",itemId);                // 产品的 itemId
+            args.putString("deliveryCode", deliveryCode);   // 自提码
+
             SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
             delegate.setArguments(args);
             startWithPop(delegate);

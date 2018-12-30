@@ -1,6 +1,5 @@
 package com.example.smartbroecommerce.main.maker;
 
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.smartbro.app.AccountManager;
 import com.example.smartbro.delegates.SmartbroDelegate;
@@ -38,21 +38,21 @@ import butterknife.BindView;
 public class ProcessingDelegate extends SmartbroDelegate
     implements ITimerListener{
 
-//    private int orderId = -1;
-//    private List<Position> positions = new ArrayList<>();
-
     // 表示是否刚刚开机
     public static boolean IS_JUST_POWER_ON = false;
 
-    // 和制作Pizza相关的类
+    // 和网络通信相关的属性
     private int orderId = -1;
+    private String productItemId = null;
+    private String deliveryCode = null;
+
+    // 和制作Pizza相关的类
     private List<Position> positions = null;
     private ArrayList<Integer> positionsIndex = null;
     private Timer mTimer = null;
     private PizzaMakerHandler pizzaMakerHandler = null;
     private PishaMachineManager pishaMachineManager = null;
-    private int counter = 0;
-    private int finishedPizzasNumber = 0; // 已经制作完成的披萨饼的数量
+
     private boolean pizzaMachineResetDone = false;
     private boolean needCallBakingCmd = true;
 
@@ -63,27 +63,22 @@ public class ProcessingDelegate extends SmartbroDelegate
 
     @BindView(R2.id.tv_which_product_is_making)
     AppCompatTextView mtvWhichProductIsMaking = null;
-    @BindView(R2.id.tv_change_number_text)
-    AppCompatTextView mtvChangeNumberText = null;
-    @BindView(R2.id.tv_service_phone_number)
-    AppCompatTextView mtvServicePhone = null;
     @BindView(R2.id.making_progress_layout_wrap)
     LinearLayoutCompat wrap = null;
+    @BindView(R2.id.making_pizza_animation_image)
+    ImageView makingPizzaAnimationImage = null;
 
     @Override
     public Object setLayout() {
-        return R.layout.delegate_maker_progress;
+        return R.layout.delegate_maker_progress_new;
     }
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-
-        if("en".equals(MachineProfile.getInstance().getLanguage())){
-            this.wrap.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
-        }
-
         Bundle args = getArguments();
         this.orderId = args.getInt("orderId");
+        this.productItemId = args.getString("itemId");
+        this.deliveryCode = args.getString("deliveryCode");
 
         // 指示是否需要向PLC发送烤饼的命令
         this.needCallBakingCmd = args.getBoolean("needCallBakingCmd");
@@ -101,17 +96,8 @@ public class ProcessingDelegate extends SmartbroDelegate
             LogUtil.LogInfoForce("确认饼的位置: " + Integer.toString(position.getIndex()) + "会被制作");
         }
 
-        // 设置屏幕上显示的找零金额
+//        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.putting_pizza_in_plate);
 
-        if (args.getDouble("changes") > 0){
-            this.mtvChangeNumberText.append(Integer.toString(args.getInt("changes")));
-        }
-        else{
-            this.mtvChangeNumberText.setText("");
-        }
-
-        // 显示联系电话
-        this.mtvServicePhone.append(MachineProfile.getInstance().getMachinePhone());
         // 设置屏幕上显示的制作进度
         this.echo(getString(R.string.text_default_making_progress), false);
     }
@@ -151,12 +137,12 @@ public class ProcessingDelegate extends SmartbroDelegate
         super.onResume();
         // 初始化handler
 
-        this.makePizza(0);
+//        this.makePizza(0);
 
         /* 开始监听 */
-        final BaseTimerTask task = new BaseTimerTask(this);
-        this.mTimer = new Timer(true);
-        this.mTimer.schedule(task, 2000, 1000);
+//        final BaseTimerTask task = new BaseTimerTask(this);
+//        this.mTimer = new Timer(true);
+//        this.mTimer.schedule(task, 2000, 1000);
     }
 
     @Override
