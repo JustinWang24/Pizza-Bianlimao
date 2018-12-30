@@ -280,8 +280,6 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
                 .success(new ISuccess() {
                     @Override
                     public void onSuccess(String response) {
-                        Log.i("Info",response);
-
                         // 设备初始化成功, 把服务器返回结果与认证的监听类对象传给handler去处理
                         MachineInitHandler.onInitDone(response, iAuthListener);
                         checkIsMachineInitialized();

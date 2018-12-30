@@ -42,7 +42,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate {
         Bundle args = getArguments();
         this.product = Product.find(args.getLong("productId"));
         if(this.product != null){
-            this.productNameText.setText("您选择的产品: " + this.product.getName());
+            this.productNameText.setText(getString(R.string.text_product_you_select) + this.product.getName());
             this.productPriceText.setText("¥ " + this.product.getPrice());
         }
     }

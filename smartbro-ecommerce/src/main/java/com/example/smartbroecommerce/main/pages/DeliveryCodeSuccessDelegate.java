@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
@@ -60,8 +63,22 @@ public class DeliveryCodeSuccessDelegate extends SmartbroDelegate {
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-        this.productNameTextView.setText("测试产品名称");
-        this.productPriceTextView.setText("¥ 39.9");
-        this.productDescTextView.setText("牛肉粒、罗勒香肠、搭配芝士");
+
+        Bundle args = getArguments();
+        this.product = Product.find(args.getString("itemId"));
+        if(this.product != null){
+            this.productNameTextView.setText(this.product.getName());
+            this.productPriceTextView.setText("¥ " + this.product.getPrice());
+            this.productDescTextView.setText(this.product.getSummary());
+
+            final RequestOptions options = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontAnimate()
+                    .centerCrop();
+            Glide.with(getProxyActivity())
+                    .load(this.product.getMainImageUrl())
+                    .apply(options)
+                    .into(this.productImage);
+        }
     }
 }

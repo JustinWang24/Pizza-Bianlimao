@@ -84,6 +84,22 @@ public class Product {
     }
 
     /**
+     * 根据给定的产品 itemId 返回产品
+     * @param itemId 产品的item id，是便利猫提供的
+     * @return
+     */
+    public static Product find(String itemId){
+        ProductDao dao = DatabaseManager.getInstance().getProductDao();
+        List<Product> list = dao.queryBuilder()
+                .where(ProductDao.Properties.ItemId.eq(itemId))
+                .list();
+        if(list.size() > 0){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
      * 获取和产品关联的价格信息
      * @return float
      */

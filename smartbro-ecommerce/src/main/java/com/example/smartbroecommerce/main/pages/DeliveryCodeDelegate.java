@@ -2,17 +2,25 @@ package com.example.smartbroecommerce.main.pages;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.smartbro.delegates.SmartbroDelegate;
+import com.example.smartbro.net.RestfulClient;
+import com.example.smartbro.net.callback.IFailure;
+import com.example.smartbro.net.callback.ISuccess;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
+import com.example.smartbroecommerce.database.MachineProfile;
+import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
+import com.example.smartbroecommerce.utils.BetterToast;
 
 import java.util.Date;
 import java.util.Timer;
@@ -62,14 +70,85 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private Timer timer = null;
     private long openTime = 0;
 
+    /**
+     * 自提码: 用户只有在付款之后才会得到的代码，一旦认证成功就直接出饼
+     */
     @OnClick(R2.id.btn_key_confirm)
     void onConfirmClick(){
         // 判断是否为特殊的维护码
-        if ( "#111".equals(this.deliveryCode.getText().toString()) ){
+        final String codeString = this.deliveryCode.getText().toString();
+        if ( "#111".equals(codeString) ){
             startWithPop(new StockManagerDelegate());
         }else{
-            startWithPop(new DeliveryCodeSuccessDelegate());
+            // 输入自提码
+            this.deliveryCode.setText(getString(R.string.text_network_communication));
+            // 先取得设备的id
+            final String hippoAppId = MachineProfile.getInstance().getHippoAppId();
+            final String assetId = MachineProfile.getInstance().getSerialName();
+
+            // 发送提货请求到服务器
+            RestfulClient.builder()
+                    .url("hippo/check-code") // 锁定要提货的商品接口
+                    .params("hippoAppId",hippoAppId)
+                    .params("assetId",assetId)
+                    .params("tempcode",codeString)
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+                            // 网络通信成功
+                            onCheckCodeSuccess(response);
+                        }
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+                            onCheckCodeFailed();
+                        }
+                    }).build().post();
         }
+    }
+
+    /**
+     * 检查自提码的网络调用成功
+     * @param response 服务器返回的字符串形式的处理结果
+     */
+    private void onCheckCodeSuccess(String response){
+        final JSONObject res = JSON.parseObject(response);
+        final int errorNo = res.getInteger("error_no");
+        final String itemId = res.getString("p");
+        final String msg = res.getString("msg");
+        if(errorNo == RestfulClient.NO_ERROR){
+            /*
+            这个方法实际会执行一共2个接口的调用，在验证 自提码 的准确性之后，
+            进行锁定商品接口的调用，然后把被锁定的商品的 itemId回送给上位机程序
+             */
+            final Product product = Product.find(itemId);
+
+            // 跳转到确认支付页面
+            Bundle args = new Bundle();
+            args.putString("itemId",itemId);
+            SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
+            delegate.setArguments(args);
+            startWithPop(delegate);
+        }else {
+            // 清除已经输入的付款码
+            this.deliveryCode.setText(msg);
+            // 失败的调用
+            BetterToast.getInstance().showText(
+                    getActivity(),
+                    msg
+            );
+        }
+    }
+
+    /**
+     * 检查自提码的网络调用失败
+     */
+    private void onCheckCodeFailed(){
+        BetterToast.getInstance().showText(
+                getActivity(),
+                "网络异常, 请稍后再试"
+        );
     }
 
     @OnClick(R2.id.btn_key_cancel_delivery)
