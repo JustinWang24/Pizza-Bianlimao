@@ -18,7 +18,7 @@ import butterknife.OnClick;
  * Created by Justin Wang from SmartBro on 27/12/18.
  */
 public class HippoPaymentFailedDelegate extends SmartbroDelegate{
-    private Product product;
+    private long productId;
 
     @BindView(R2.id.tv_product_name_in_payment_failed)
     AppCompatTextView productNameText;
@@ -42,10 +42,8 @@ public class HippoPaymentFailedDelegate extends SmartbroDelegate{
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         Bundle args = getArguments();
-        this.product = Product.find(args.getLong("productId"));
-        if(this.product != null){
-            this.productNameText.setText(getString(R.string.text_product_you_select) + this.product.getName());
-        }
+        this.productNameText.setText(getString(R.string.text_product_you_select) + args.getString("productName"));
+        this.productId = args.getLong("productId");
     }
 
     protected void backToProductList(){
