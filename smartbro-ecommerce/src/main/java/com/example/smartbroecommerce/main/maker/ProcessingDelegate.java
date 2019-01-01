@@ -96,8 +96,6 @@ public class ProcessingDelegate extends SmartbroDelegate
             LogUtil.LogInfoForce("确认饼的位置: " + Integer.toString(position.getIndex()) + "会被制作");
         }
 
-//        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.putting_pizza_in_plate);
-
         // 设置屏幕上显示的制作进度
         this.echo(getString(R.string.text_default_making_progress), false);
     }
@@ -234,40 +232,28 @@ public class ProcessingDelegate extends SmartbroDelegate
                 switch (status){
                     case MachineStatusOfMakingPizza.INFORM_TO_TAKE_PIZZA_READY:
                         // 只要已得到可以取饼的消息，显示第几张饼已经烤好
-                        final int currentTaskIndex = pizzaMakerHandler.getCurrentTaskIndex() +1;
+                        _showTakePizzaAnimation(); // 显示可以取饼的动画
                         if(!isPlayingAudio){
                             // 如果没有播放提示语音
                             playAudio(R.raw.dingding);
-                            if("cn".equals(MachineProfile.getInstance().getLanguage())){
-                                echo(getString(R.string.text_please_take_pizza1)
-                                        + Integer.toString(currentTaskIndex+1) + " "
-                                        + getString(R.string.text_please_take_pizza2), false);
-                            }else {
-                                echo(getString(R.string.text_please_take_pizza1) + "\n" + getString(R.string.text_please_take_pizza2), false);
-                            }
                         }
                         break;
                     case MachineStatusOfMakingPizza.ERROR_COMMUNICATION:
                         // PLC 链接中断了
-                        if("en".equals(MachineProfile.getInstance().getLanguage())){
-                            playAudio(R.raw.on_error_en);
-                        }else {
-                            playAudio(R.raw.on_error);
-                        }
+                        playAudio(R.raw.on_error);  // 播放语音
                         mTimer.cancel();
                         mTimer = null;
-                        startWithPop(new StopWorkingDelegate());
+                        startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS:
                         // Todo 检查到设备故障，但是现在并不需要处理
-                        startWithPop(new StopWorkingDelegate());
+                        startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT:
                         if(pizzaMakerHandler.isLastOneDone()){
-                            echo(getString(R.string.text_all_good), false); // 显示并已经烤完了
+                            _showWaitingForPlateAnimation();    // 显示等待装盘的动画
                             mTimer.cancel();
                             mTimer = null;
-//                            PishaMachineManager.IS_FORCED_TO_STOP_ALL = true;
                             // 这个时候，还没有把盒子推出来，因此需要检查
                             waitThenRedirect();
                         }
@@ -291,6 +277,20 @@ public class ProcessingDelegate extends SmartbroDelegate
                 }
             }
         });
+    }
+
+    /**
+     * 显示等待装盘的动画
+     */
+    private void _showWaitingForPlateAnimation(){
+        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.putting_pizza_in_plate);
+    }
+
+    /**
+     * 显示可以取饼的动画
+     */
+    private void _showTakePizzaAnimation(){
+        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.please_take_pizza);
     }
 
     /**
