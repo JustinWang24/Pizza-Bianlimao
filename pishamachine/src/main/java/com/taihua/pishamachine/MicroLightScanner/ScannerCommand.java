@@ -10,6 +10,38 @@ public class ScannerCommand {
 
     private static final byte[] CMD_HEAD = { 0x55, (byte)0xAA };
 
+    public static final int MODE_NORMAL = 39;  // 普通模式
+    public static final int MODE_SINGLE = 40;  // 单次模式
+    public static final int MODE_INTERVAL = 41;    // 间隔模式(2s)
+
+    /**
+     * 扫码工作模式设置
+     * @return byte[]
+     */
+    public static byte[] GetSetCodeReturnModeCmd(int mode){
+        final byte[] finalResult;
+        final byte[] cmd              = { 0x22 };
+
+        if(mode == MODE_INTERVAL){
+            // 03 00 03 02 00
+            final byte[] dataLength1 = { 0x03, 0x00 };
+            final byte[] data1 = { 0x03, 0x02, 0x00 };
+            finalResult = _BuildCommand(cmd, dataLength1, data1);
+        }else if(mode == MODE_SINGLE){
+            // 01 00 02
+            final byte[] dataLength2 = { 0x01, 0x00 };
+            final byte[] data2 = { 0x02 };
+            finalResult = _BuildCommand(cmd, dataLength2, data2);
+        }else {
+            // 普通模式
+            // 01 00 01
+            final byte[] dataLength3 = { 0x01, 0x00 };
+            final byte[] data3 = { 0x01 };
+            finalResult = _BuildCommand(cmd, dataLength3, data3);
+        }
+        return finalResult;
+    }
+
     /**
      * 获取清空码值的命令
      * @return byte[]

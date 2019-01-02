@@ -43,11 +43,11 @@ public class QrCodeParserImpl implements IResultParser {
                 }
             }
 
-            if(!isNoData){
+            if(isNoData){
+                return CommandExecuteResult.KEEP_WAITING;
+            }else {
                 // 是有效的数据，返回解析出的二维码
                 return bytesToAsciiString(resultBuffer).toString();
-            }else {
-                return CommandExecuteResult.KEEP_WAITING;
             }
         }
         return CommandExecuteResult.NOT_OK;

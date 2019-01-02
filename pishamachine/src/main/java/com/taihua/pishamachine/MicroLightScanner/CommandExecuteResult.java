@@ -1,6 +1,7 @@
 package com.taihua.pishamachine.MicroLightScanner;
 
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
+import com.taihua.pishamachine.command.CommandHelper;
 
 /**
  * 这个类是装载扫描枪的串口命令执行结果的类
@@ -8,6 +9,7 @@ import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
 public class CommandExecuteResult {
     public static final String OK = "OK";
     public static final String NOT_OK = "NOK";
+    public static final String NOTHING = "NOTHING";
     public static final String KEEP_WAITING = "KEEP_WAITING";
 
     /**
@@ -43,5 +45,16 @@ public class CommandExecuteResult {
         }else{
             return this.size > 0 ? OK : NOT_OK;
         }
+    }
+
+    /**
+     * 获取读取的字节的文本形式
+     * @return
+     */
+    public String getRealResult(){
+        if(this.resultBuffer != null && this.resultBuffer.length > 0)
+            return CommandHelper.bytesToHexString(this.resultBuffer,this.resultBuffer.length);
+        else
+            return NOTHING;
     }
 }

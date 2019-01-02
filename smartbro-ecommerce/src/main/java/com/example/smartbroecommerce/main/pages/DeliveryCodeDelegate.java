@@ -18,6 +18,7 @@ import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Product;
+import com.example.smartbroecommerce.machine.InitDelegate;
 import com.example.smartbroecommerce.main.maker.ErrorHappendDuringMakingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
@@ -86,7 +87,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
             startWithPop(new StopWorkingDelegate());
         }else if("#333".equals(codeString)){
             // 暂停设备运行密码
-            startWithPop(new ErrorHappendDuringMakingDelegate());
+            startWithPop(new InitDelegate());
         }else{
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));

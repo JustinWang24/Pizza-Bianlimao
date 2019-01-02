@@ -53,6 +53,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      * 扫描的定时器
      */
     private Timer scanCustomerPaymentCodeTimer = null;
+    private BaseTimerTask timerTask = null;
 
     private final int maxWaitSeconds = 60;  // 最多等待一分钟的时间
     private int scanCounter = 0;            // 当前第几次扫描
@@ -122,10 +123,11 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      * 在页面跳转前把本地使用的变量重新设置一下
      */
     private void _resetLocalVariables(){
-        Log.i("Info", " _resetLocalVariables 执行了 ");
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
+            this.timerTask.cancel();
+            this.timerTask = null;
         }
         this.orderNo = null;
         this.product = null;
@@ -198,6 +200,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
+            this.timerTask.cancel();
+            this.timerTask = null;
         }
 
         SmartbroDelegate delegate = new ProcessingDelegate();
@@ -228,11 +232,11 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      */
     private void startScanning(){
         if(this.scanCustomerPaymentCodeTimer == null){
-            this.scanCustomerPaymentCodeTimer = new Timer();
+            this.scanCustomerPaymentCodeTimer = new Timer(true);
+            this.timerTask = new BaseTimerTask(this);
         }
-        BaseTimerTask task = new BaseTimerTask(this);
         // 每隔 2 秒钟读取一下串口 或者查询一下服务器
-        this.scanCustomerPaymentCodeTimer.schedule(task,2000,1000);
+        this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,2000);
     }
 
     @Override

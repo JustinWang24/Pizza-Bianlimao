@@ -13,8 +13,8 @@ public class Tx200Client {
     /**
      * 扫描枪串口的配置
      */
-    private static final int RS232_FLAG = 1;
-    private static final int RS232_RATE = 115200;
+    private static final int RS232_FLAG = 0;
+    private static final int RS232_RATE = 9600;
     private static final char RS232_N_EVENT = 'N';
     private static final String RS232_PORT = "/dev/ttymxc3";
 
@@ -48,11 +48,28 @@ public class Tx200Client {
     }
 
     /**
+     * 设置正确的工作模式
+     * @return
+     */
+    public CommandExecuteResult connect(){
+        // 发送确定模式命令 : 间隔模式
+        return connect(ScannerCommand.MODE_INTERVAL);
+    }
+
+    public CommandExecuteResult connect(int mode){
+        // 发送确定模式命令 : 间隔模式
+        final byte[] command2 = ScannerCommand.GetSetCodeReturnModeCmd(mode);
+        final byte[] resultBuffer2 = new byte[20]; // 收信的字节缓冲区
+        final int readSize2 = this.serialPortHelper.sentData(command2, resultBuffer2, 100);
+        return new CommandExecuteResult(readSize2, resultBuffer2, new ReportModeParserImpl());
+    }
+
+    /**
      * 连接扫码枪
      * @param passiveMode
      * @return
      */
-    public CommandExecuteResult connect(boolean passiveMode){
+    public CommandExecuteResult setMode(boolean passiveMode){
         final byte[] command;                   // 需要发送的命令
         final byte[] resultBuffer = new byte[20]; // 收信的字节缓冲区
 
@@ -63,9 +80,8 @@ public class Tx200Client {
             // 主动上报模式
             command = ScannerCommand.GetSetPositiveModeCmd();
         }
-
         // 发送命令
-        final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 200);
+        final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 80);
         return new CommandExecuteResult(readSize, resultBuffer, new ReportModeParserImpl());
     }
 

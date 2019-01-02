@@ -29,9 +29,9 @@ public class LauncherScrollDelegate extends SmartbroDelegate implements OnItemCl
 
     private void initBanner(){
 //        INTEGERS.add(R.mipmap.launcher_10);
-        INTEGERS.add(R.mipmap.launcher_11);
-        INTEGERS.add(R.mipmap.launcher_12);
-        INTEGERS.add(R.mipmap.launcher_13);
+        INTEGERS.add(R.mipmap.mainbg);
+        INTEGERS.add(R.mipmap.mainbg);
+//        INTEGERS.add(R.mipmap.launcher_13);
 
         this.convenientBanner.setPages(
                 new LauncherHolderCreator(),

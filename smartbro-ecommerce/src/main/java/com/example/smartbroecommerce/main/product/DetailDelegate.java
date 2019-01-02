@@ -274,7 +274,7 @@ public class DetailDelegate extends SmartbroDelegate
     }
 
     private void _updateUIDisplayAttributes(){
-        this.wrapper.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
+        this.wrapper.setBackground(getResources().getDrawable(R.mipmap.mainbg));
         this.tvPageTitle.setBackgroundColor(ColorHelper.GetColorIntValueByName("black",getResources()));
 
         this.cartButtonLayout.setBackgroundColor(Color.TRANSPARENT);

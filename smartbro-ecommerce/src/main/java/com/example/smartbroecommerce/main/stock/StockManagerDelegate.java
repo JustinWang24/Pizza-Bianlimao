@@ -29,6 +29,7 @@ import com.example.smartbroecommerce.database.PositionDao;
 import com.example.smartbroecommerce.main.converters.PositionsListDataConverter;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
+import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,11 @@ public class StockManagerDelegate extends SmartbroDelegate {
     private DataConvertor converter = null;
     private PositionListAdaptor adaptor = null;
 
+    /**
+     * 是否为开发模式
+     */
+    private boolean isDevMode = false;
+
     @BindView(R2.id.rv_positions_listing)
     RecyclerView positionsRecyclerView = null;
     @BindView(R2.id.rl_start_button_wrap)
@@ -63,7 +69,20 @@ public class StockManagerDelegate extends SmartbroDelegate {
         if(this.isStockUpdated && this.changedPositions.size() > 0){
             BetterToast.getInstance().showText(getActivity(),getString(R.string.msg_need_upload_positions));
         }else {
-            startWithPop(new ListDelegate());
+            // 使能扫描枪
+            try {
+                Tx200Client.getClientInstance().setMode(false);
+                Tx200Client.getClientInstance().connect();
+                startWithPop(new ListDelegate());
+            }catch (Exception e){
+                BetterToast.getInstance().showText(
+                        getProxyActivity(),
+                        "设备串口连接失败"
+                );
+                if(this.isDevMode){
+                    startWithPop(new ListDelegate());
+                }
+            }
         }
     }
 

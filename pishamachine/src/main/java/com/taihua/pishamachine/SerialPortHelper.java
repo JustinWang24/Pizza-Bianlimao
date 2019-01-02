@@ -30,7 +30,6 @@ public class SerialPortHelper {
 
     //构造函数
     public SerialPortHelper(String path, int baudrate, int flags, int nEvent) throws NullPointerException {
-
         try {
             serialPort = new SerialPort(new File(path), baudrate, flags, nEvent);
         } catch (IOException e) {

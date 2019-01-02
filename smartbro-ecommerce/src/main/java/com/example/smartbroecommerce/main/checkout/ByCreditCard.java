@@ -97,7 +97,7 @@ public class ByCreditCard extends BasicCheckoutDelegate {
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         if("en".equals(MachineProfile.getInstance().getLanguage())){
             this.titleBar.setBackgroundColor(Color.BLACK);
-            this.wrap.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
+            this.wrap.setBackground(getResources().getDrawable(R.mipmap.mainbg));
         }
 
         // 显示订单总金额

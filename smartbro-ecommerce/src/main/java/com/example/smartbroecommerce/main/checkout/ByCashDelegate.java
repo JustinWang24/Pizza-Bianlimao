@@ -98,11 +98,6 @@ public class ByCashDelegate extends BasicCheckoutDelegate {
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-        if("en".equals(MachineProfile.getInstance().getLanguage())){
-            this.titleBar.setBackgroundColor(Color.BLACK);
-            this.wrap.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
-        }
-
         // 显示订单总金额
         this.orderTotalAmount = (int) this.createOrder().getTotolAmount();
         this.tvOrderTotal.setText(

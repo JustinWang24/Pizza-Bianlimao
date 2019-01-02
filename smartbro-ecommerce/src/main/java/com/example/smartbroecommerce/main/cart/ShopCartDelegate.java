@@ -190,11 +190,6 @@ public class ShopCartDelegate extends SmartbroDelegate implements ITimerListener
     public void onLazyInitView(@Nullable Bundle savedInstanceState) {
         super.onLazyInitView(savedInstanceState);
 
-        if("en".equals(MachineProfile.getInstance().getLanguage())){
-            this.toolbar.setBackgroundColor(Color.BLACK);
-            this.wrap.setBackground(getResources().getDrawable(R.mipmap.au_pizza_ninja_bg));
-        }
-
         final ArrayList<MultipleItemEntity> data =
                 new ShopCartDataConverter()
                         .setObjectData(ShoppingCart.getInstance().getShoppingCartItems())

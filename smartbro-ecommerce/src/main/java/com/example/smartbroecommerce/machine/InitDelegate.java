@@ -73,12 +73,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     private PishaMachineManager pishaMachineManager = null;
 
-    private Tx200Client tx200Client = null;
-
     /**
      * 扫描的定时器
      */
     private Timer scanCustomerPaymentCodeTimer = null;
+    private BaseTimerTask timerTask = null;
 
     /**
      * 需要一个Android的handler来在Loader消失的时候加上一些延时
@@ -115,10 +114,9 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     @OnClick(R2.id.btn_open_reader_keep_alive)
     void openAndKeepAliveClicked(){
-        echo("扫描枪 使能开始 命令模式",true);
         try {
-            final CommandExecuteResult result = Tx200Client.getClientInstance().connect(true);
-            echo("启动命令执行结果: "+result.getResult(), false);
+            final CommandExecuteResult result = Tx200Client.getClientInstance().connect();
+            echo("扫码工作模式模式: 间隔模式(2s); "+result.getResult() + " : " + result.getRealResult(), true);
         }catch (Exception e){
             echo("执行 启动命令 错误: " + e.getMessage(), false);
         }
@@ -130,11 +128,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
         this.stopScanning();
         String resultString = "";
         try{
-            resultString = Tx200Client.getClientInstance().disconnect().getResult();
+            resultString = Tx200Client.getClientInstance().disconnect().getRealResult();
         }catch (Exception e){
             resultString = "停止工作发生错误: " + e.getMessage();
         }
-        echo("扫描枪暂停工作", true);
+        echo("扫描枪暂停工作", false);
         echo(resultString,false);
         echo("扫描枪停止工作操作成功",false);
         // 检查解析QR
@@ -160,23 +158,30 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //        Log.i("Info", Boolean.toString(expecting.equals(QrCode)));
     }
 
+    /**
+     * 开始扫码的定时任务
+     */
     private void startScanning(){
         if(this.scanCustomerPaymentCodeTimer == null){
-            this.scanCustomerPaymentCodeTimer = new Timer();
+            this.scanCustomerPaymentCodeTimer = new Timer(true);
+            this.timerTask = new BaseTimerTask(this);
         }
-        BaseTimerTask task = new BaseTimerTask(this);
-
-        this.scanCustomerPaymentCodeTimer.schedule(
-                task,
-                2000,
+        this.scanCustomerPaymentCodeTimer.scheduleAtFixedRate(
+                this.timerTask,
+                1000,
                 2000
         );
     }
 
+    /**
+     * 停止扫描器的定时任务
+     */
     private void stopScanning(){
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
+            this.timerTask.cancel();
+            this.timerTask = null;
         }
     }
 
@@ -185,20 +190,18 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
         getProxyActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
-//                if(QrCodeString.length() > 0)
-//                    echo("二维码: " + QrCodeString, false);
                 try {
-                    final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
-                    if(QrCodeString.length() > 0){
+                    final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
+                    final String QrCodeString = commandExecuteResult.getResult();
+                    echo("读取到结果 REAL: " + commandExecuteResult.getRealResult(), false);
+
+                    if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
                         echo("读取到结果: " + QrCodeString, false);
                         stopScanning();
-                    }else{
-                        echo("扫描中: ", false);
                     }
 
                 }catch (Exception e){
-                    echo("扫描中 发生错误: " + e.getMessage(), true);
+                    echo("扫描中 发生错误: " + e.getMessage(), false);
                     stopScanning();
                 }
 
@@ -491,6 +494,14 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //        byte[] id = this.parseTransactionId(resp);
 //        Log.i("txn id", byteArrayToHexString(id));
 //        echo("未开始连接读卡器", false);
+        try{
+            final boolean mode = false;
+            final String modeString = mode ? "命令模式" : "主动上报模式";
+            final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().setMode(mode);
+            echo("设置扫描结果上报模式: " + modeString + "; " + commandExecuteResult.getRealResult() + ":" + commandExecuteResult.getRealResult(), true);
+        }catch (Exception e){
+            echo("串口链接失败, " + e.getMessage(), true);
+        }
     }
 
     @Override
