@@ -20,6 +20,7 @@ import com.example.smartbro.net.callback.IFailure;
 import com.example.smartbro.net.callback.ISuccess;
 import com.example.smartbro.ui.launcher.ILauncherListener;
 import com.example.smartbro.ui.launcher.OnLauncherFinishTag;
+import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbro.utils.validators.FormValidator;
 import com.example.smartbroecommerce.Auth.IAuthListener;
@@ -30,6 +31,7 @@ import com.example.smartbroecommerce.container.ContainerConfig;
 import com.example.smartbroecommerce.main.maker.PizzaMakerHandler;
 import com.taihua.pishamachine.CashierManager;
 import com.taihua.pishamachine.CashierMessage;
+import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
 import com.taihua.pishamachine.MicroLightScanner.ScannerCommand;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
@@ -37,6 +39,7 @@ import com.taihua.pishamachine.PishaMachineManager;
 import com.taihua.pishamachine.command.CommandHelper;
 
 import java.util.Date;
+import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -73,6 +76,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     private Tx200Client tx200Client = null;
 
     /**
+     * 扫描的定时器
+     */
+    private Timer scanCustomerPaymentCodeTimer = null;
+
+    /**
      * 需要一个Android的handler来在Loader消失的时候加上一些延时
      * Handler声明为 static 类型， 避免内存泄漏
      */
@@ -107,24 +115,28 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     @OnClick(R2.id.btn_open_reader_keep_alive)
     void openAndKeepAliveClicked(){
-        Log.i("Info","扫描枪 使能开始");
-        final byte[] cmd1 = ScannerCommand.GetSetPassiveModeCmd();
-        Log.i("Info", "命令模式: " + CommandHelper.bytesToHexString(cmd1, cmd1.length));
-        final byte[] cmd2 = ScannerCommand.GetReadQrCodeCommand();
-        Log.i("Info", "获取扫描结果: " + CommandHelper.bytesToHexString(cmd2, cmd2.length));
-        final byte[] cmd3 = ScannerCommand.GetSetPositiveModeCmd();
-        Log.i("Info", "主动模式: " + CommandHelper.bytesToHexString(cmd3, cmd3.length));
-
-        final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
-        Log.i("Info", "二维码: " + QrCodeString);
+        echo("扫描枪 使能开始 命令模式",true);
+        try {
+            final CommandExecuteResult result = Tx200Client.getClientInstance().connect(true);
+            echo("启动命令执行结果: "+result.getResult(), false);
+        }catch (Exception e){
+            echo("执行 启动命令 错误: " + e.getMessage(), false);
+        }
+        this.startScanning();
     }
 
     @OnClick(R2.id.btn_reader_close)
     void closeReaderBtnClicked(){
-        Log.i("Info","扫描枪 禁能开始");
-        final byte[] cmd = ScannerCommand.GetClearCodeCmd();
-        Log.i("Info", "禁能: " + CommandHelper.bytesToHexString(cmd, cmd.length));
-
+        this.stopScanning();
+        String resultString = "";
+        try{
+            resultString = Tx200Client.getClientInstance().disconnect().getResult();
+        }catch (Exception e){
+            resultString = "停止工作发生错误: " + e.getMessage();
+        }
+        echo("扫描枪暂停工作", true);
+        echo(resultString,false);
+        echo("扫描枪停止工作操作成功",false);
         // 检查解析QR
 //        final byte[] readBuffer = {
 //                0x55, (byte)0xAA, 0x30,
@@ -148,11 +160,47 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //        Log.i("Info", Boolean.toString(expecting.equals(QrCode)));
     }
 
+    private void startScanning(){
+        if(this.scanCustomerPaymentCodeTimer == null){
+            this.scanCustomerPaymentCodeTimer = new Timer();
+        }
+        BaseTimerTask task = new BaseTimerTask(this);
+
+        this.scanCustomerPaymentCodeTimer.schedule(
+                task,
+                2000,
+                2000
+        );
+    }
+
+    private void stopScanning(){
+        if(this.scanCustomerPaymentCodeTimer != null){
+            this.scanCustomerPaymentCodeTimer.cancel();
+            this.scanCustomerPaymentCodeTimer = null;
+        }
+    }
+
     @Override
     public void onTimer() {
         getProxyActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+//                final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
+//                if(QrCodeString.length() > 0)
+//                    echo("二维码: " + QrCodeString, false);
+                try {
+                    final String QrCodeString = Tx200Client.getClientInstance().scan().getResult();
+                    if(QrCodeString.length() > 0){
+                        echo("读取到结果: " + QrCodeString, false);
+                        stopScanning();
+                    }else{
+                        echo("扫描中: ", false);
+                    }
+
+                }catch (Exception e){
+                    echo("扫描中 发生错误: " + e.getMessage(), true);
+                    stopScanning();
+                }
 
             }
         });

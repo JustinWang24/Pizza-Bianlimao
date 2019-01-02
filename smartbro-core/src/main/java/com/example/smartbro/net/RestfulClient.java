@@ -32,6 +32,10 @@ public class RestfulClient {
     public static final int NO_ERROR = 100;
     public static final String STATUS_OK = "ok";
     public static final String HIPPO_APP_VERSION = "1.0";
+    public static final String ACTION_GO_NEXT       = "done";   // 可以执行下一步操作了
+    public static final String ACTION_KEEP_CHECKING = "keep";   // 继续查询
+    public static final String ACTION_PAY_FAILED    = "fail";   // 执行支付失败的处理
+    public static final String ACTION_ORDER_CLOSE   = "close";  // 执行订单已经关闭的处理
 
     private final String URL;
     private static final WeakHashMap<String, Object> PARAMS = RestfulCreator.getParams();
