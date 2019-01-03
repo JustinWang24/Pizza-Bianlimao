@@ -94,10 +94,9 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     private CashierManager cashierManager = null;
 
     //
-    private boolean openAndKeepAliveBtnJustClicked = false;
+    private boolean findValidCode = false;
 
     // 测试功能相关函数集合
-
     @OnClick(R2.id.btn_open_plc)
     void onTestPlcClicked(){
         if(this.pishaMachineManager == null){
@@ -126,15 +125,7 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     @OnClick(R2.id.btn_reader_close)
     void closeReaderBtnClicked(){
         this.stopScanning();
-        String resultString = "";
-        try{
-            resultString = Tx200Client.getClientInstance().disconnect().getRealResult();
-        }catch (Exception e){
-            resultString = "停止工作发生错误: " + e.getMessage();
-        }
-        echo("扫描枪暂停工作", false);
-        echo(resultString,false);
-        echo("扫描枪停止工作操作成功",false);
+        echo("扫描枪暂停工作", true);
         // 检查解析QR
 //        final byte[] readBuffer = {
 //                0x55, (byte)0xAA, 0x30,
@@ -152,9 +143,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //                (byte)0x9C  // BCC校验字
 //        };
 //        final String expecting = "01DG50KXYAVQEFDgMGDAE/7kGFJto1xiar";
+//        final QrCodeParserImpl parser = new QrCodeParserImpl();
 //        final String QrCode = QrCodeParserImpl.bytesToAsciiString(readBuffer).toString();
 //        Log.i("Info", "二维码: " + QrCode);
 //        Log.i("Info", "期待结果: " + expecting);
+//        Log.i("Info", "解析的结果: " + parser.go(readBuffer));
 //        Log.i("Info", Boolean.toString(expecting.equals(QrCode)));
     }
 
@@ -166,10 +159,12 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
             this.scanCustomerPaymentCodeTimer = new Timer(true);
             this.timerTask = new BaseTimerTask(this);
         }
+        this.findValidCode = false;
+
         this.scanCustomerPaymentCodeTimer.scheduleAtFixedRate(
-                this.timerTask,
-                1000,
-                2000
+            this.timerTask,
+            1000,
+            2000
         );
     }
 
@@ -191,20 +186,20 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
             @Override
             public void run() {
                 try {
-                    final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
-                    final String QrCodeString = commandExecuteResult.getResult();
-                    echo("读取到结果 REAL: " + commandExecuteResult.getRealResult(), false);
+                    if(!findValidCode){
+                        final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
+                        final String QrCodeString = commandExecuteResult.getResult();
 
-                    if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
-                        echo("读取到结果: " + QrCodeString, false);
-                        stopScanning();
+                        if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
+                            findValidCode = true;
+                            echo("读取到结果: " + QrCodeString, false);
+                            stopScanning();
+                        }
                     }
-
                 }catch (Exception e){
                     echo("扫描中 发生错误: " + e.getMessage(), false);
                     stopScanning();
                 }
-
             }
         });
     }

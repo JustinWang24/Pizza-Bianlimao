@@ -20,6 +20,8 @@ import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
+import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
+import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -235,6 +237,9 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             this.scanCustomerPaymentCodeTimer = new Timer(true);
             this.timerTask = new BaseTimerTask(this);
         }
+        // 连接扫码枪
+        Tx200Client.getClientInstance().connect();
+
         // 每隔 2 秒钟读取一下串口 或者查询一下服务器
         this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,2000);
     }
@@ -244,15 +249,19 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         getProxyActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i("Info","读取串口 " + Integer.toString(scanCounter));
                 if(scanCounter <= maxWaitSeconds){
                     scanCounter++;
 
-                    if(scanCounter > 10){
-                        goToNextView();
-                    }
                     if(customerPaymentCode == null){
                         // Todo 在这里打开扫码枪的扫描端口 开始循环读取扫描信息
+                        final String code = Tx200Client.getClientInstance().scan().toString();
+                        if(
+                                !CommandExecuteResult.NOT_OK.equals(code) &&
+                                !CommandExecuteResult.NOTHING.equals(code) &&
+                                !CommandExecuteResult.KEEP_WAITING.equals(code))
+                        {
+                            customerPaymentCode = code;
+                        }
                     }else {
                         // 已经取得了用户的付款码 那么准备跳转
                         if(isOrderHasBeenPaid){

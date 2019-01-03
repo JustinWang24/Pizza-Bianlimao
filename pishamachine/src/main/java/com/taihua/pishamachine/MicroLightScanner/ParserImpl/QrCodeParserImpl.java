@@ -1,5 +1,7 @@
 package com.taihua.pishamachine.MicroLightScanner.ParserImpl;
 
+import android.util.Log;
+
 import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
 import com.taihua.pishamachine.MicroLightScanner.IResultParser;
@@ -11,7 +13,8 @@ import com.taihua.pishamachine.command.CommandHelper;
  */
 public class QrCodeParserImpl implements IResultParser {
 
-    private static final byte[] HEAD_TO_CHECK = {0x55, (byte)0xAA, 0x30};
+    private static final byte[] HEAD_TO_CHECK = {(byte)0xAA, 0x30};
+//    private static final byte[] HEAD_TO_CHECK = {0x55, (byte)0xAA, 0x30};
 
     // 标识字:一字节， 0x00则代表成功应答，其它失败或错误
     private static final byte[] RIGHT_IDENTICAL_BYTES = {0x00};
@@ -32,22 +35,32 @@ public class QrCodeParserImpl implements IResultParser {
     public String go(byte[] resultBuffer) {
         // 如无数据则返回: 55 aa 30 00 00 00 cf
         final byte[] noDataReturnResult = {
-                0x55,(byte) 0xAA, 0x30, 0x00, 0x00, 0x00, (byte)0xCF
+//                0x55,
+                (byte) 0xAA, 0x30, 0x00, 0x00, 0x00, (byte)0xCF
         };
         if(resultBuffer.length >= noDataReturnResult.length){
-            boolean isNoData = false;
+            boolean noData = true;
+            boolean isAllZero = true;
+            // 检查是否为无数据
             for (int i=0; i < noDataReturnResult.length; i++){
-                if(noDataReturnResult[i] != resultBuffer[i]){
-                    isNoData = true;
+                if(noDataReturnResult[i] != resultBuffer[i+1]){
+                    noData = false;
                     break;
                 }
             }
-
-            if(isNoData){
-                return CommandExecuteResult.KEEP_WAITING;
-            }else {
+            // 检查是否为全零
+            for (int i=0; i < resultBuffer.length; i++){
+                if(resultBuffer[i] != 0x00){
+                    isAllZero = false;
+                    break;
+                }
+            }
+            if(!isAllZero && !noData){
                 // 是有效的数据，返回解析出的二维码
                 return bytesToAsciiString(resultBuffer).toString();
+            }else {
+                // 确认的无格式数据或者是全零
+                return CommandExecuteResult.KEEP_WAITING;
             }
         }
         return CommandExecuteResult.NOT_OK;
@@ -59,7 +72,7 @@ public class QrCodeParserImpl implements IResultParser {
      * @return
      */
     public static StringBuilder bytesToAsciiString(byte[] readBuffer){
-        StringBuilder QrCode = new StringBuilder("");
+//        StringBuilder QrCode = new StringBuilder("");
 
         // 获取标示字是否为 0x00
         final int lengthToCheck = readBuffer.length - HEAD_TO_CHECK.length;
@@ -69,8 +82,8 @@ public class QrCodeParserImpl implements IResultParser {
             for (int i=0; i<lengthToCheck; i++){
                 if(
                         HEAD_TO_CHECK[0] == readBuffer[i] &&
-                        HEAD_TO_CHECK[1] == readBuffer[i+1] &&
-                        HEAD_TO_CHECK[2] == readBuffer[i+2]
+                        HEAD_TO_CHECK[1] == readBuffer[i+1]
+//                        HEAD_TO_CHECK[2] == readBuffer[i+2]
                     ){
                     dataStartOffset = i + HEAD_TO_CHECK.length;
                 }
@@ -84,15 +97,15 @@ public class QrCodeParserImpl implements IResultParser {
                         // 开始解析数据域的长度
                         int lengthInLow = readBuffer[dataStartOffset];
                         int lengthInHigh = readBuffer[dataStartOffset+1];
-                        QrCode.append(dataStartOffset);
-                        QrCode.append(":低位字节值 ");
-                        QrCode.append(lengthInLow);
-                        QrCode.append(":高位字节值 ");
-                        QrCode.append(lengthInHigh);
-                        QrCode.append(":转换结果");
+//                        QrCode.append(dataStartOffset);
+//                        QrCode.append(":低位字节值 ");
+//                        QrCode.append(lengthInLow);
+//                        QrCode.append(":高位字节值 ");
+//                        QrCode.append(lengthInHigh);
+//                        QrCode.append(":转换结果");
                         // 得到最终的数据域的真实长度
                         final int totalDataDomainLength = (lengthInHigh << 8 & 0xFF00) | (lengthInLow & 0xFF);
-                        QrCode.append(totalDataDomainLength);
+//                        QrCode.append(totalDataDomainLength);
 
                         dataStartOffset += BYTES_LENGTH_OF_DATA_DOMAIN_INDICATOR; // 到这里得到了数据域开始的位置
 
@@ -107,8 +120,18 @@ public class QrCodeParserImpl implements IResultParser {
                             for (int i = 0; i < totalLengthWithoutBCC; i++){
                                 realDataWithoutBCC[i] = readBuffer[dataStartOffset - lengthOfAllHeaders + i];
                             }
-                            final byte[] realDataWithBcc =  ScannerCommand._AppendVerificationCode_BCC(realDataWithoutBCC);
-                            if(realDataWithBcc[totalLengthWithoutBCC] == readBuffer[dataStartOffset + totalDataDomainLength]){
+
+                            final byte[] fakeData = new byte[realDataWithoutBCC.length+1];
+                            fakeData[0] = 0x55;
+                            for (int j=0;j<realDataWithoutBCC.length;j++){
+                                fakeData[j+1] = realDataWithoutBCC[j];
+                            }
+
+                            final byte[] realDataWithBcc =  ScannerCommand._AppendVerificationCode_BCC(fakeData);
+
+//                            if(realDataWithBcc[totalLengthWithoutBCC+1] == readBuffer[dataStartOffset + totalDataDomainLength]){
+
+                            if(realDataWithBcc[totalLengthWithoutBCC+1] == readBuffer[dataStartOffset + totalDataDomainLength]){
                                 // BCC验证通过 开始对数据域的内容进行转换
                                 final byte[] verifiedDataDomain = new byte[totalDataDomainLength];
                                 for (int i = 0; i < totalDataDomainLength; i++){
@@ -116,37 +139,37 @@ public class QrCodeParserImpl implements IResultParser {
                                 }
                                 try {
                                     // 数据域转换成二维码字符串
-                                    QrCode = new StringBuilder(new String(verifiedDataDomain,"UTF-8"));
-                                    return QrCode;
+//                                    QrCode = new StringBuilder(new String(verifiedDataDomain,"UTF-8"));
+//                                    return QrCode;
+                                    return new StringBuilder(new String(verifiedDataDomain,"UTF-8"));
                                 }catch (Exception e){
                                     LogUtil.LogStackTrace(e, "8989");
                                 }
                             }else {
                                 // BCC验证失败
-                                final byte[] calc = new byte[1];
-                                calc[0] = realDataWithBcc[totalLengthWithoutBCC];
-                                QrCode = new StringBuilder(
-                                        ERROR_WRONG_BCC +
-                                        " 计算结果:" + CommandHelper.bytesToHexString(calc,1) + ", "
-                                        + "扫描枪结果:" +  CommandHelper.bytesToHexString(new byte[]{readBuffer[dataStartOffset + totalDataDomainLength]},1)
-                                );
+//                                final byte[] calc = new byte[1];
+//                                calc[0] = realDataWithBcc[totalLengthWithoutBCC];
+//                                QrCode = new StringBuilder(
+//                                        ERROR_WRONG_BCC +
+//                                        " 计算结果:" + CommandHelper.bytesToHexString(calc,1) + ", "
+//                                        + "扫描枪结果:" +  CommandHelper.bytesToHexString(new byte[]{readBuffer[dataStartOffset + totalDataDomainLength]},1)
+//                                );
                             }
                         }
                     }else{
                         // 表示找到了标示字的位置，但是其值不是所期待的 0x00
-                        QrCode = new StringBuilder(ERROR_WRONG_IDENTICAL_BYTE + Byte.toString(readBuffer[dataStartOffset]));
+//                        QrCode = new StringBuilder(ERROR_WRONG_IDENTICAL_BYTE + Byte.toString(readBuffer[dataStartOffset]));
                     }
                 }else {
                     // 不存在标示字位
-                    QrCode = new StringBuilder(ERROR_NOT_FOUND_IDENTICAL_BYTE);
+//                    QrCode = new StringBuilder(ERROR_NOT_FOUND_IDENTICAL_BYTE);
                 }
             }else {
-                QrCode = new StringBuilder(ERROR_NOT_FOUND_HEAD);
+//                QrCode = new StringBuilder(ERROR_NOT_FOUND_HEAD);
             }
         }
 
         // 运行到这里， 表示解析失败了
-        LogUtil.LogInfoForce(QrCode.toString());
         return new StringBuilder(CommandExecuteResult.NOT_OK);
     }
 }

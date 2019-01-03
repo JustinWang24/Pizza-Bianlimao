@@ -4,7 +4,6 @@ import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.ReportModeParserImpl;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.ScannerControlParserImpl;
 import com.taihua.pishamachine.SerialPortHelper;
-import com.taihua.pishamachine.command.CommandHelper;
 
 /**
  * Created by Justin Wang from SmartBro on 29/12/18.
