@@ -15,4 +15,9 @@ public interface IAuthListener {
      * 注册成功的回调
      */
     void onSignUpSuccess();
+
+    /**
+     * 发生错误时的回调
+     */
+    void onError();
 }

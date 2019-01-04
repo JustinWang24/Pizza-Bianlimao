@@ -49,11 +49,6 @@ public class StockManagerDelegate extends SmartbroDelegate {
     private DataConvertor converter = null;
     private PositionListAdaptor adaptor = null;
 
-    /**
-     * 是否为开发模式
-     */
-    private boolean isDevMode = false;
-
     @BindView(R2.id.rv_positions_listing)
     RecyclerView positionsRecyclerView = null;
     @BindView(R2.id.rl_start_button_wrap)
@@ -66,20 +61,21 @@ public class StockManagerDelegate extends SmartbroDelegate {
      */
     @OnClick(R2.id.rl_start_button_wrap)
     public void onBtnStartClick(){
+        final boolean isDevMode = false;
+
         if(this.isStockUpdated && this.changedPositions.size() > 0){
             BetterToast.getInstance().showText(getActivity(),getString(R.string.msg_need_upload_positions));
         }else {
-            // 使能扫描枪
             try {
-                Tx200Client.getClientInstance().setMode(false);
-                Tx200Client.getClientInstance().connect();
+                // 禁能扫描枪 跳转到产品列表页面
+                Tx200Client.getClientInstance().clearCode();
                 startWithPop(new ListDelegate());
             }catch (Exception e){
                 BetterToast.getInstance().showText(
                         getProxyActivity(),
                         "设备串口连接失败"
                 );
-                if(this.isDevMode){
+                if(isDevMode){
                     startWithPop(new ListDelegate());
                 }
             }

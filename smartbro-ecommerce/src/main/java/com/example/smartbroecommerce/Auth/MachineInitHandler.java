@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.smartbro.app.AccountManager;
+import com.example.smartbro.net.RestfulClient;
 import com.example.smartbroecommerce.database.DatabaseManager;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.PaymentMethod;
@@ -21,11 +22,18 @@ public class MachineInitHandler {
     public static void onInitDone(String responseStringInJson, IAuthListener iAuthListener){
         final long machineId = initMachine(responseStringInJson);
 
-        // Todo 保存设备初始化的状态, 或用户登录状态
-        AccountManager.setSignState(true);
         AccountManager.setMachineId(machineId);
-        // 执行注册成功的回调方法
-        iAuthListener.onSignUpSuccess();
+
+        if(machineId < 0){
+            // 解析失败
+            AccountManager.setSignState(false);
+            iAuthListener.onError();
+        }else{
+            // 解析成功
+            AccountManager.setSignState(true);
+            // 执行注册成功的回调方法
+            iAuthListener.onSignUpSuccess();
+        }
     }
 
     /**
@@ -34,6 +42,12 @@ public class MachineInitHandler {
      * @return
      */
     public static long initMachine(String responseStringInJson){
+        final int errorNo = JSON.parseObject(responseStringInJson).getIntValue("error_no");
+
+        if(errorNo != RestfulClient.NO_ERROR){
+            // 解析数据失败，返回负一
+            return -1;
+        }
 
         final JSONObject machineJson =
                 JSON.parseObject(responseStringInJson).getJSONObject("data");

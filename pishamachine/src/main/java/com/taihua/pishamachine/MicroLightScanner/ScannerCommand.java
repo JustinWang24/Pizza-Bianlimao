@@ -43,13 +43,24 @@ public class ScannerCommand {
     }
 
     /**
-     * 获取清空码值的命令
+     * 获取清空码值的命令, 此命令执行完之后 扫码枪就会停止读取
      * @return byte[]
      */
     public static byte[] GetClearCodeCmd(){
         final byte[] cmd              = { 0x21 };
         final byte[] dataLength       = { 0x01, 0x00};
         final byte[] data             = { 0x00 };
+        return _BuildCommand(cmd, dataLength, data);
+    }
+
+    /**
+     * 启用QR识别
+     * @return byte[]
+     */
+    public static byte[] ActivateReaderQRCmd(){
+        final byte[] cmd              = { 0x21 };
+        final byte[] dataLength       = { 0x01, 0x00};
+        final byte[] data             = { 0x01 };
         return _BuildCommand(cmd, dataLength, data);
     }
 
@@ -76,7 +87,7 @@ public class ScannerCommand {
     }
 
     /**
-     * 命令模式下获取扫描结果
+     * 命令模式下获取扫描结果 实际在主动上报模式下没有用，但是也可以成功读取
      * @return byte[]
      */
     public static byte[] GetReadQrCodeCommand(){

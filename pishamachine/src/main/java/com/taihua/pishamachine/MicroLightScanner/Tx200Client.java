@@ -64,6 +64,17 @@ public class Tx200Client {
     }
 
     /**
+     * 启用扫描枪的命令
+     * @return
+     */
+    public CommandExecuteResult activateQrReader(){
+        final byte[] cmd = ScannerCommand.ActivateReaderQRCmd();
+        final byte[] readBuffer = new byte[40];
+        final int readSize = this.serialPortHelper.sentData(cmd, readBuffer, 200);
+        return new CommandExecuteResult(readSize, readBuffer, new ReportModeParserImpl());
+    }
+
+    /**
      * 连接扫码枪
      * @param passiveMode
      * @return
@@ -93,6 +104,14 @@ public class Tx200Client {
         final byte[] resultBuffer = new byte[100]; // 收信的字节缓冲区
         final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 300);
         return new CommandExecuteResult(readSize, resultBuffer, new QrCodeParserImpl());
+    }
+
+    /**
+     * 清空已经扫到的二维码的值，相当于断开扫码枪的连接
+     * @return CommandExecuteResult
+     */
+    public CommandExecuteResult clearCode(){
+        return disconnect();
     }
 
     /**

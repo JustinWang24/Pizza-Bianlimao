@@ -113,19 +113,22 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
     @OnClick(R2.id.btn_open_reader_keep_alive)
     void openAndKeepAliveClicked(){
-        try {
-            final CommandExecuteResult result = Tx200Client.getClientInstance().connect();
-            echo("扫码工作模式模式: 间隔模式(2s); "+result.getResult() + " : " + result.getRealResult(), true);
-        }catch (Exception e){
-            echo("执行 启动命令 错误: " + e.getMessage(), false);
-        }
+
+        // 1: 发送启用 QR 识别 命令
+        Tx200Client.getClientInstance().activateQrReader();
+        echo("启动扫描枪; openAndKeepAliveClicked", true);
+
+        // 2：循环读取即可
         this.startScanning();
+
+        // 3：读取到之后，发送清空码值命令停止读取
+        // 4：再回到1开始读
     }
 
     @OnClick(R2.id.btn_reader_close)
     void closeReaderBtnClicked(){
         this.stopScanning();
-        echo("扫描枪暂停工作", true);
+        echo("扫描枪暂停工作 closeReaderBtnClicked", false);
         // 检查解析QR
 //        final byte[] readBuffer = {
 //                0x55, (byte)0xAA, 0x30,
@@ -155,11 +158,12 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
      * 开始扫码的定时任务
      */
     private void startScanning(){
+        this.findValidCode = false;
+
         if(this.scanCustomerPaymentCodeTimer == null){
             this.scanCustomerPaymentCodeTimer = new Timer(true);
             this.timerTask = new BaseTimerTask(this);
         }
-        this.findValidCode = false;
 
         this.scanCustomerPaymentCodeTimer.scheduleAtFixedRate(
             this.timerTask,
@@ -172,12 +176,18 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
      * 停止扫描器的定时任务
      */
     private void stopScanning(){
+        this.findValidCode = true;
+
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
             this.timerTask.cancel();
             this.timerTask = null;
         }
+
+        // 禁止扫描枪继续扫码
+        Tx200Client.getClientInstance().clearCode();
+        echo("禁止扫描枪继续扫码 stopScanning", true);
     }
 
     @Override
@@ -187,13 +197,21 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
             public void run() {
                 try {
                     if(!findValidCode){
+                        // 循环读取
                         final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
                         final String QrCodeString = commandExecuteResult.getResult();
 
                         if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
-                            findValidCode = true;
-                            echo("读取到结果: " + QrCodeString, false);
-                            stopScanning();
+                            echo("onTimer 读取到结果: " + QrCodeString, false);
+
+                            // 读取到之后，进行清空操作
+                            Tx200Client.getClientInstance().clearCode();
+                            echo("扫描枪清空 onTimer", false);
+
+                            Thread.sleep(300);
+
+                            Tx200Client.getClientInstance().activateQrReader();
+                            echo("等待下一次扫描 onTimer", false);
                         }
                     }
                 }catch (Exception e){
@@ -317,8 +335,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
     // 当初始化确认按钮被点击
     @OnClick(R2.id.btn_confirm_init)
     void onClickInitMachine(){
+//        this.stopScanning();
+
         if(this.validate()){
 //            getProxyActivity().deleteDatabase("pizza_box.db");
+            Log.i("Info", this.machineSerialNumber.getText().toString());
             // 如果输入的设备串号符合要求, 那么就提交给服务器进行验证
             RestfulClient.builder()
                 .url("machines/init")
@@ -489,13 +510,20 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //        byte[] id = this.parseTransactionId(resp);
 //        Log.i("txn id", byteArrayToHexString(id));
 //        echo("未开始连接读卡器", false);
-        try{
-            final boolean mode = false;
-            final String modeString = mode ? "命令模式" : "主动上报模式";
-            final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().setMode(mode);
-            echo("设置扫描结果上报模式: " + modeString + "; " + commandExecuteResult.getRealResult() + ":" + commandExecuteResult.getRealResult(), true);
+//        try{
+//            final boolean mode = false;
+//            final String modeString = mode ? "命令模式" : "主动上报模式";
+//            final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().setMode(mode);
+//            echo("设置扫描结果上报模式: " + modeString + "; " + commandExecuteResult.getRealResult() + ":" + commandExecuteResult.getRealResult(), true);
+//        }catch (Exception e){
+//            echo("串口连接失败, " + e.getMessage(), true);
+//        }
+
+        try {
+            final CommandExecuteResult result = Tx200Client.getClientInstance().clearCode();
+            echo("清空码值 扫描枪已经禁止使用 " + result.getRealResult(), false);
         }catch (Exception e){
-            echo("串口链接失败, " + e.getMessage(), true);
+            echo("执行 启动命令 错误: " + e.getMessage(), false);
         }
     }
 
@@ -527,6 +555,11 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
             if(this.iLauncherListener != null){
                 // 执行初始化完成时的回调
                 this.iLauncherListener.onLaunchFinish(OnLauncherFinishTag.INITED);
+            }
+        }else {
+            if(this.iLauncherListener != null){
+                // 执行初始化完成时 得到了错误的结果 的回调
+                this.iLauncherListener.onLaunchFinish(OnLauncherFinishTag.NOT_INITED);
             }
         }
     }

@@ -12,6 +12,7 @@ import com.example.smartbro.ui.launcher.ILauncherListener;
 import com.example.smartbro.ui.launcher.OnLauncherFinishTag;
 import com.example.smartbroecommerce.Auth.IAuthListener;
 import com.example.smartbroecommerce.machine.InitDelegate;
+import com.example.smartbroecommerce.main.pages.HippoStopWorkingDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
 
 /**
@@ -58,6 +59,11 @@ public class ExampleActivity extends ProxyActivity implements IAuthListener, ILa
     }
 
     @Override
+    public void onError() {
+        Toast.makeText(this, "初始化失败，请联系厂家", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void onSignInSuccess() {
 
     }
@@ -86,6 +92,7 @@ public class ExampleActivity extends ProxyActivity implements IAuthListener, ILa
                 startWithPop(delegate);
                 break;
             case NOT_INITED:
+                startWithPop(new HippoStopWorkingDelegate());
                 break;
             default:
                 break;

@@ -20,6 +20,7 @@ import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
+import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 
@@ -122,32 +123,6 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     }
 
     /**
-     * 在页面跳转前把本地使用的变量重新设置一下
-     */
-    private void _resetLocalVariables(){
-        if(this.scanCustomerPaymentCodeTimer != null){
-            this.scanCustomerPaymentCodeTimer.cancel();
-            this.scanCustomerPaymentCodeTimer = null;
-            this.timerTask.cancel();
-            this.timerTask = null;
-        }
-        this.orderNo = null;
-        this.product = null;
-        this.actualFee = 0;
-        this.customerPaymentCode = null;
-        this.isOrderHasBeenPaid = false;
-        this.isPayOrderApiCalled = false;
-    }
-
-    /**
-     * 返回产品列表页面
-     */
-    protected void backToProductList(){
-        this._resetLocalVariables();
-        startWithPop(new ListDelegate());
-    }
-
-    /**
      * 反扫支付接口
      */
     private void payOrderNow(){
@@ -196,6 +171,32 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     }
 
     /**
+     * 在页面跳转前把本地使用的变量重新设置一下
+     */
+    private void _resetLocalVariables(){
+        if(this.scanCustomerPaymentCodeTimer != null){
+            this.scanCustomerPaymentCodeTimer.cancel();
+            this.scanCustomerPaymentCodeTimer = null;
+            this.timerTask.cancel();
+            this.timerTask = null;
+        }
+        this.orderNo = null;
+        this.product = null;
+        this.actualFee = 0;
+        this.customerPaymentCode = null;
+        this.isOrderHasBeenPaid = false;
+        this.isPayOrderApiCalled = false;
+    }
+
+    /**
+     * 返回产品列表页面
+     */
+    protected void backToProductList(){
+        this._resetLocalVariables();
+        this._redirectToDelegate(new ListDelegate());
+    }
+
+    /**
      * 跳转到烤饼的页面
      */
     protected void goToNextView(){
@@ -206,8 +207,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             this.timerTask = null;
         }
 
-        SmartbroDelegate delegate = new ProcessingDelegate();
-        this._redirectToDelegate(delegate);
+        this._redirectToDelegate(new ProcessingDelegate());
         this._resetLocalVariables();
     }
 
@@ -216,6 +216,9 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      * @param delegate
      */
     private void _redirectToDelegate(SmartbroDelegate delegate){
+        // 停止扫码枪的工作
+        Tx200Client.getClientInstance().clearCode();
+
         Bundle args = new Bundle();
         args.putString("orderNo",this.orderNo);
         args.putInt("totalPrice",this.actualFee);
@@ -233,15 +236,24 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      * 开始扫描的具体方法
      */
     private void startScanning(){
-        if(this.scanCustomerPaymentCodeTimer == null){
-            this.scanCustomerPaymentCodeTimer = new Timer(true);
-            this.timerTask = new BaseTimerTask(this);
-        }
-        // 连接扫码枪
-        Tx200Client.getClientInstance().connect();
+        try {
+            // 将用户的识别码置为空
+            this.customerPaymentCode = null;
 
-        // 每隔 2 秒钟读取一下串口 或者查询一下服务器
-        this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,2000);
+            // 1: 发送启用 QR 识别 命令
+            Tx200Client.getClientInstance().activateQrReader();
+
+            // 初始化定时器
+            if(this.scanCustomerPaymentCodeTimer == null){
+                this.scanCustomerPaymentCodeTimer = new Timer(true);
+                this.timerTask = new BaseTimerTask(this);
+            }
+
+            // 每隔 2 秒钟读取一下串口 或者查询一下服务器
+            this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,2000);
+        }catch (Exception e){
+            BetterToast.getInstance().showText(getProxyActivity(),"扫码器连接失败");
+        }
     }
 
     @Override
@@ -253,14 +265,20 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                     scanCounter++;
 
                     if(customerPaymentCode == null){
-                        // Todo 在这里打开扫码枪的扫描端口 开始循环读取扫描信息
-                        final String code = Tx200Client.getClientInstance().scan().toString();
-                        if(
-                                !CommandExecuteResult.NOT_OK.equals(code) &&
-                                !CommandExecuteResult.NOTHING.equals(code) &&
-                                !CommandExecuteResult.KEEP_WAITING.equals(code))
-                        {
-                            customerPaymentCode = code;
+                        // 在这里打开扫码枪的扫描端口 开始循环读取扫描信息
+                        try{
+                            final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
+                            final String QrCodeString = commandExecuteResult.getResult();
+                            if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
+                                customerPaymentCode = QrCodeString;
+                                // 读取到之后，进行清空操作
+                                Tx200Client.getClientInstance().clearCode();
+                                Thread.sleep(300);
+                                // 再启动扫码枪
+                                Tx200Client.getClientInstance().activateQrReader();
+                            }
+                        }catch (Exception e){
+                            BetterToast.getInstance().showText(getProxyActivity(),"扫码器工作异常");
                         }
                     }else {
                         // 已经取得了用户的付款码 那么准备跳转
@@ -330,13 +348,13 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             if(RestfulClient.ACTION_GO_NEXT.equals(nextActionString)){
                 // 表示支付已经确认，可以去烤饼了
                 this.isOrderHasBeenPaid = true;
-                Log.i("Info","表示支付已经确认，可以去烤饼了");
+                LogUtil.LogInfo("表示支付已经确认，可以去烤饼了 " + this.orderNo);
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
-                Log.i("Info","需要继续查询订单的支付状态");
+                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
             }else if(RestfulClient.ACTION_ORDER_CLOSE.equals(nextActionString)){
                 // Todo 表示订单处于关闭的状态，该如何处理写在这里
-                Log.i("Info","表示订单处于关闭的状态");
+                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
             }
         }
     }
@@ -359,13 +377,13 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             if(RestfulClient.ACTION_GO_NEXT.equals(nextActionString)){
                 // 表示支付已经确认，可以去烤饼了
                 this.isOrderHasBeenPaid = true;
-                Log.i("Info","表示支付已经确认，可以去烤饼了");
+                LogUtil.LogInfo("表示支付已经确认，可以去烤饼了 " + this.orderNo);
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
-                Log.i("Info","需要继续查询订单的支付状态");
+                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
             }else if(RestfulClient.ACTION_ORDER_CLOSE.equals(nextActionString)){
                 // Todo 表示订单处于关闭的状态，该如何处理写在这里
-                Log.i("Info","表示订单处于关闭的状态");
+                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
             }
         }
     }
