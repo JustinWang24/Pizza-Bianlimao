@@ -312,11 +312,6 @@ public class DetailDelegate extends SmartbroDelegate
         this.mTimer = new Timer(true);
         this.mTimer.schedule(task,1000, 5000);
 
-        if("en".equals(MachineProfile.getInstance().getLanguage())){
-            MediaPlayer player = MediaPlayer.create(getActivity(), R.raw.productsingle_en);
-            player.start();
-        }
-
         this.alarmShowed = false;
     }
 

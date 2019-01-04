@@ -1,6 +1,5 @@
 package com.example.smartbroecommerce.main.checkout;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
@@ -207,9 +206,6 @@ public class CouponFormDelegate extends BasicCheckoutDelegate {
             return;
         }
         // 直接进行结账
-        // 播放语音
-        MediaPlayer player = MediaPlayer.create(getActivity(),R.raw.tuhao);
-        player.start();
         _checkout(this.methodName,"",0);
     }
 

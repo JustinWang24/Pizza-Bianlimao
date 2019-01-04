@@ -105,30 +105,30 @@ public class UrlTool {
     public static void reportOrderComplete(int orderId){
         // 把购物车清空
         ShoppingCart.getInstance().clear();
-        if( orderId > 0){
-            RestfulClient.builder()
-                    .url(API_REPORT_ORDER_COMPLETE)
-                    .params("order_id",Integer.toString(orderId))
-                    .success(new ISuccess() {
-                        @Override
-                        public void onSuccess(String response) {
-
-                        }
-                    })
-                    .error(new IError() {
-                        @Override
-                        public void onError(int code, String msg) {
-
-                        }
-                    })
-                    .failure(new IFailure() {
-                        @Override
-                        public void onFailure() {
-
-                        }
-                    })
-                    .build()
-                    .get();
-        }
+//        if( orderId > 0){
+//            RestfulClient.builder()
+//                    .url(API_REPORT_ORDER_COMPLETE)
+//                    .params("order_id",Integer.toString(orderId))
+//                    .success(new ISuccess() {
+//                        @Override
+//                        public void onSuccess(String response) {
+//
+//                        }
+//                    })
+//                    .error(new IError() {
+//                        @Override
+//                        public void onError(int code, String msg) {
+//
+//                        }
+//                    })
+//                    .failure(new IFailure() {
+//                        @Override
+//                        public void onFailure() {
+//
+//                        }
+//                    })
+//                    .build()
+//                    .get();
+//        }
     }
 }

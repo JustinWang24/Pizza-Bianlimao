@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartbro.app.AccountManager;
+import com.example.smartbro.app.Smartbro;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IFailure;
@@ -28,7 +29,10 @@ import com.example.smartbroecommerce.Auth.MachineInitHandler;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.container.ContainerConfig;
+import com.example.smartbroecommerce.database.Product;
+import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.maker.PizzaMakerHandler;
+import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.taihua.pishamachine.CashierManager;
 import com.taihua.pishamachine.CashierMessage;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
@@ -241,27 +245,30 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //                ContainerConfig.BAUD_RATE,
 //                HANDLER1
 //            );
-        final MsgHandler msgHandler = new MsgHandler();
-        if(this.cashierManager == null){
-            this.cashierManager = CashierManager.getInstance();
-            this.cashierManager.init(msgHandler);
-        }
-
-        if(this.cashierEnabled){
-            echo("投币器禁能: ", true);
-            // 投币器已经使能， 执行禁能操作
-            this.cashierEnabled = false;
-//            final boolean result = this.cashierManager.disableCashier();
-            this.cashierManager.stopTimerTask();
-
-        }else {
-            echo("投币器使能: ", false);
-            this.cashierEnabled = true;
-//            this.cashierManager.enableCashier();
-            this.cashierManager.startTimerTask();
-        }
+//        final MsgHandler msgHandler = new MsgHandler();
+//        if(this.cashierManager == null){
+//            this.cashierManager = CashierManager.getInstance();
+//            this.cashierManager.init(msgHandler);
+//        }
+//
+//        if(this.cashierEnabled){
+//            echo("投币器禁能: ", true);
+//            // 投币器已经使能， 执行禁能操作
+//            this.cashierEnabled = false;
+////            final boolean result = this.cashierManager.disableCashier();
+//            this.cashierManager.stopTimerTask();
+//
+//        }else {
+//            echo("投币器使能: ", false);
+//            this.cashierEnabled = true;
+////            this.cashierManager.enableCashier();
+//            this.cashierManager.startTimerTask();
+//        }
         // 测试注册一个事件
 //        EventBus.getDefault().post("setTestPort1ButtonClicked", "do_something_tag");
+
+        // 初始化购物车
+
     }
 
     private class MsgHandler extends Handler{

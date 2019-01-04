@@ -40,6 +40,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     private String appId = null;
     private String assetId = null;
 
+    private int orderIntegerId = 0;
+
     /**
      * 从服务器获取的新生成的订单的ID
      */
@@ -186,6 +188,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         this.customerPaymentCode = null;
         this.isOrderHasBeenPaid = false;
         this.isPayOrderApiCalled = false;
+        this.scanCounter = 0;
     }
 
     /**
@@ -193,7 +196,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      */
     protected void backToProductList(){
         this._resetLocalVariables();
-        this._redirectToDelegate(new ListDelegate());
+        startWithPop(new ListDelegate());
     }
 
     /**
@@ -217,17 +220,27 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      */
     private void _redirectToDelegate(SmartbroDelegate delegate){
         // 停止扫码枪的工作
-        Tx200Client.getClientInstance().clearCode();
+        try{
+            Tx200Client.getClientInstance().clearCode();
+        }catch (Exception e){
+            LogUtil.LogStackTrace(e,"859280");
+        }
 
         Bundle args = new Bundle();
+        args.putInt("orderIntegerId",this.orderIntegerId);
         args.putString("orderNo",this.orderNo);
         args.putInt("totalPrice",this.actualFee);
-        args.putString("tempcode", this.customerPaymentCode);
+
+        // 用户的付款码
+        args.putString("deliveryCode", this.customerPaymentCode);
         args.putString("appId", this.appId);
         args.putString("assetId", this.assetId);
         args.putString("productName", this.product.getName());
-        args.putString("productItemId", this.product.getItemId());
+        args.putString("itemId", this.product.getItemId());
         args.putLong("productId", this.product.getId());
+        args.putBoolean("needCallBakingCmd", true);
+        args.putInt("changes", 0);           // 找零金额
+
         delegate.setArguments(args);
         startWithPop(delegate);
     }
@@ -312,11 +325,12 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         final JSONObject resJson =
                 JSON.parseObject(response);
         final int errorNo = resJson.getInteger("error_no");
+        final JSONObject data = resJson.getJSONObject("data");
 
-        if(errorNo == RestfulClient.NO_ERROR){
+        if(errorNo == RestfulClient.NO_ERROR && data != null){
             // 表示创建订单成功
             this.orderNo = resJson.getString("oid");
-            final JSONObject data = resJson.getJSONObject("data");
+            this.orderIntegerId = resJson.getInteger("orderIntId");
 
             // 应付金额(最后付款的时候以这个金额为准)
             final double fee = data.getDouble("actual_fee");
@@ -348,7 +362,6 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             if(RestfulClient.ACTION_GO_NEXT.equals(nextActionString)){
                 // 表示支付已经确认，可以去烤饼了
                 this.isOrderHasBeenPaid = true;
-                LogUtil.LogInfo("表示支付已经确认，可以去烤饼了 " + this.orderNo);
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
                 LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
@@ -377,7 +390,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             if(RestfulClient.ACTION_GO_NEXT.equals(nextActionString)){
                 // 表示支付已经确认，可以去烤饼了
                 this.isOrderHasBeenPaid = true;
-                LogUtil.LogInfo("表示支付已经确认，可以去烤饼了 " + this.orderNo);
+                LogUtil.LogInfoForce("表示支付已经确认，可以去烤饼了 1111 " + this.orderNo);
+                this.goToNextView();
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
                 LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);

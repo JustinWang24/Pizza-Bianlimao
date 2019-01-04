@@ -1,7 +1,6 @@
 package com.example.smartbroecommerce.main.cart;
 
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -18,7 +17,6 @@ import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
-import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.PaymentMethod;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.product.ListDelegate;
@@ -217,15 +215,15 @@ public class ShopCartDelegate extends SmartbroDelegate implements ITimerListener
         /*
          * 中英语音播放的切换
          */
-        MediaPlayer player = null;
-        if("cn".equals(MachineProfile.getInstance().getLanguage())){
-            // 中文不播放语音
-        }else {
-            player = MediaPlayer.create(getActivity(),R.raw.pay_notice_en);
-        }
-        if(player != null){
-            player.start();
-        }
+//        MediaPlayer player = null;
+//        if("cn".equals(MachineProfile.getInstance().getLanguage())){
+//            // 中文不播放语音
+//        }else {
+//            player = MediaPlayer.create(getActivity(),R.raw.pay_notice_en);
+//        }
+//        if(player != null){
+//            player.start();
+//        }
     }
 
     @Override

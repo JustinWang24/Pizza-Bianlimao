@@ -29,7 +29,6 @@ public class PishaMachineManager {
     private GetStatusThread mGetStatusThread = null;
 
     private static final String TAG = "PishaMachineManager";
-    //    private String mPath = "/dev/ttyS1";
     private int mErrorTime = 0;
     private Handler handler;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -101,9 +100,13 @@ public class PishaMachineManager {
         this.consequentNoBoxCount = 0;
 
         if (mSerialPortHelper == null) {
-            mSerialPortHelper = new SerialPortHelper(path, baudrate, 0, 'N');
-            // 显示的初始化串口，给定读取时延为50毫秒
-            mSerialPortHelper.init(50);
+            try{
+                mSerialPortHelper = new SerialPortHelper(path, baudrate, 0, 'N');
+                // 显示的初始化串口，给定读取时延为50毫秒
+                mSerialPortHelper.init(50);
+            }catch (Exception e){
+                LogUtil.LogStackTrace(e, "串口初始化失败");
+            }
         }
     }
 
@@ -215,7 +218,6 @@ public class PishaMachineManager {
         final int readSize = this.sent(CRC16.getSendBuf(buffer), outBuffer);
         if (readSize > 0) {
             byte[] okBufferUnsinged = {0x01, 0x10, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00};
-//            byte[] okBufferUnsinged = {0x01, 0x10, 0x00, 0x00, 0x00, 0x05, 0x00, 0x0A};
             byte[] okBuffer = CRC16.getSendBuf(okBufferUnsinged);
             LogUtil.LogInfo("复位Data:"+bytesToHexString(outBuffer,outBuffer.length));
 
@@ -260,7 +262,6 @@ public class PishaMachineManager {
         public void run() {
             super.run();
             this.startMe();
-//            LogUtil.LogInfo("获取状态请求线程开始");
             //后两位为校验码
             final byte[] buffer = {0x01, 0x03, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00};
             while (!this.workIsDone && !IS_FORCED_TO_STOP_ALL) {

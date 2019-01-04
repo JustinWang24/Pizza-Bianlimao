@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/text_general_select_all"
+                android:text=""
                 android:textColor="#ffcc29"
                 android:textSize="80sp">
             </android.support.v7.widget.AppCompatTextView>

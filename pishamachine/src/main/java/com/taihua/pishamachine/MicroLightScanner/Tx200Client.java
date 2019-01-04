@@ -120,7 +120,7 @@ public class Tx200Client {
      */
     public CommandExecuteResult disconnect(){
         final byte[] command = ScannerCommand.GetClearCodeCmd();
-        final byte[] resultBuffer = new byte[20]; // 收信的字节缓冲区
+        final byte[] resultBuffer = new byte[100]; // 收信的字节缓冲区
         final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 200);
         return new CommandExecuteResult(readSize, resultBuffer, new ScannerControlParserImpl());
     }

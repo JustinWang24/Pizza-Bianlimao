@@ -9,17 +9,20 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.smartbro.app.AccountManager;
 import com.example.smartbro.delegates.SmartbroDelegate;
+import com.example.smartbro.net.RestfulClient;
+import com.example.smartbro.net.callback.IFailure;
+import com.example.smartbro.net.callback.ISuccess;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.container.ContainerConfig;
-import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.ShoppingCart;
-import com.example.smartbroecommerce.main.pages.StopWorkingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.UrlTool;
 import com.taihua.pishamachine.LogUtil;
@@ -45,11 +48,15 @@ public class ProcessingDelegate extends SmartbroDelegate
     private int orderId = -1;
     private String productItemId = null;
     private String deliveryCode = null;
+    private String orderNo = null;
+    private String appId = null;
+    private String assetId = null;
 
     // 和制作Pizza相关的类
     private List<Position> positions = null;
     private ArrayList<Integer> positionsIndex = null;
     private Timer mTimer = null;
+    private BaseTimerTask baseTimerTask = null;
     private PizzaMakerHandler pizzaMakerHandler = null;
     private PishaMachineManager pishaMachineManager = null;
 
@@ -60,6 +67,7 @@ public class ProcessingDelegate extends SmartbroDelegate
     private boolean isPlayingAudio = false;
     private MediaPlayer mediaPlayer = null;
     private int nextAudioRaw = -1;
+    private boolean pizzaDoneAudioHasBeenPlayed = false;    // pizza制作完成语音已经被播放过了
 
     @BindView(R2.id.tv_which_product_is_making)
     AppCompatTextView mtvWhichProductIsMaking = null;
@@ -76,9 +84,12 @@ public class ProcessingDelegate extends SmartbroDelegate
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         Bundle args = getArguments();
-        this.orderId = args.getInt("orderId");
+        this.orderId = args.getInt("orderIntegerId");
         this.productItemId = args.getString("itemId");
         this.deliveryCode = args.getString("deliveryCode");
+        this.orderNo = args.getString("orderNo");
+        this.appId = args.getString("appId");
+        this.assetId = args.getString("assetId");
 
         // 指示是否需要向PLC发送烤饼的命令
         this.needCallBakingCmd = args.getBoolean("needCallBakingCmd");
@@ -93,11 +104,11 @@ public class ProcessingDelegate extends SmartbroDelegate
             this.positionsIndex.add(position.getIndex());
             // 只要一开始烤，就把饼置位为无效
             position.disable();
-            LogUtil.LogInfoForce("确认饼的位置: " + Integer.toString(position.getIndex()) + "会被制作");
+            LogUtil.LogInfo("确认饼的位置: " + Integer.toString(position.getIndex()) + "会被制作");
         }
 
         // 设置屏幕上显示的制作进度
-        this.echo(getString(R.string.text_default_making_progress), false);
+//        this.echo(getString(R.string.text_default_making_progress), false);
     }
 
     /**
@@ -135,12 +146,12 @@ public class ProcessingDelegate extends SmartbroDelegate
         super.onResume();
         // 初始化handler
 
-//        this.makePizza(0);
+        this.makePizza(0);
 
         /* 开始监听 */
-//        final BaseTimerTask task = new BaseTimerTask(this);
-//        this.mTimer = new Timer(true);
-//        this.mTimer.schedule(task, 2000, 1000);
+        this.baseTimerTask = new BaseTimerTask(this);
+        this.mTimer = new Timer(true);
+        this.mTimer.scheduleAtFixedRate(this.baseTimerTask, 2000, 1000);
     }
 
     @Override
@@ -151,8 +162,6 @@ public class ProcessingDelegate extends SmartbroDelegate
     }
 
     private void makePizza(int taskIndex){
-        LogUtil.LogInfo("Process Delegate 烤饼开始 :" + Integer.toString(taskIndex+1));
-
         // 能够执行到这里，表示肯定不是刚刚开机了
         IS_JUST_POWER_ON = false;
 
@@ -162,9 +171,11 @@ public class ProcessingDelegate extends SmartbroDelegate
                 pizzaMakerHandler = PizzaMakerHandler
                         .getInstance(this, String.valueOf(AccountManager.getMachineId()));
                 // 设置handler的起始状态与位置
-                pizzaMakerHandler.init(orderId, positionsIndex.size());
+                LogUtil.LogInfo("Process Delegate 烤饼开始 :" + Integer.toString(taskIndex+1));
 
+                pizzaMakerHandler.init(this.orderId, positionsIndex.size());
                 final int position = positionsIndex.get(taskIndex);
+
                 this.pizzaMakerHandler.setCurrentPositionIndex(position, taskIndex);
 
                 if(this.pishaMachineManager == null){
@@ -173,10 +184,9 @@ public class ProcessingDelegate extends SmartbroDelegate
                 this.pishaMachineManager.init(
                         ContainerConfig.PATH,
                         ContainerConfig.BAUD_RATE,
-                        pizzaMakerHandler
+                        this.pizzaMakerHandler
                 );
                 final boolean isLastOne = (taskIndex == positionsIndex.size()-1);
-
                 if(this.needCallBakingCmd){
                     pishaMachineManager.baking(position,1, isLastOne);
                 }else{
@@ -184,15 +194,8 @@ public class ProcessingDelegate extends SmartbroDelegate
                     pishaMachineManager.baking(position,-1, isLastOne);
                 }
 
-
                 // 烤饼开始了，在重置位设置成false
                 this.setPizzaMachineResetDone(false);
-
-                if("en".equals(MachineProfile.getInstance().getLanguage())){
-                    this.playAudio(R.raw.make_first_one_en);
-                }else {
-                    this.playAudio(R.raw.make_first_one);
-                }
             }
         }catch (Exception e){
             UrlTool.reportMachineStatus(
@@ -202,11 +205,6 @@ public class ProcessingDelegate extends SmartbroDelegate
                     orderId
             );
 
-            if("en".equals(MachineProfile.getInstance().getLanguage())){
-                this.playAudio(R.raw.on_error_en);
-            }else {
-                this.playAudio(R.raw.on_error);
-            }
             LogUtil.LogStackTrace(e, "250250250");
         }
     }
@@ -229,20 +227,24 @@ public class ProcessingDelegate extends SmartbroDelegate
             public void run() {
                 // 检查是否收到了消息
                 final int status = pizzaMakerHandler.getProcessStatus();
+                LogUtil.LogInfo("消息循环 :" + Integer.toString(status));
                 switch (status){
                     case MachineStatusOfMakingPizza.INFORM_TO_TAKE_PIZZA_READY:
                         // 只要已得到可以取饼的消息，显示第几张饼已经烤好
                         _showTakePizzaAnimation(); // 显示可以取饼的动画
-                        if(!isPlayingAudio){
+                        if(!isPlayingAudio && !pizzaDoneAudioHasBeenPlayed){
+                            pizzaDoneAudioHasBeenPlayed = true;
                             // 如果没有播放提示语音
-                            playAudio(R.raw.dingding);
+                            playAudio(R.raw.pizzadone);
                         }
                         break;
                     case MachineStatusOfMakingPizza.ERROR_COMMUNICATION:
                         // PLC 链接中断了
-                        playAudio(R.raw.on_error);  // 播放语音
                         mTimer.cancel();
                         mTimer = null;
+                        baseTimerTask.cancel();
+                        baseTimerTask = null;
+
                         startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS:
@@ -254,6 +256,8 @@ public class ProcessingDelegate extends SmartbroDelegate
                             _showWaitingForPlateAnimation();    // 显示等待装盘的动画
                             mTimer.cancel();
                             mTimer = null;
+                            baseTimerTask.cancel();
+                            baseTimerTask = null;
                             // 这个时候，还没有把盒子推出来，因此需要检查
                             waitThenRedirect();
                         }
@@ -291,6 +295,33 @@ public class ProcessingDelegate extends SmartbroDelegate
      */
     private void _showTakePizzaAnimation(){
         this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.please_take_pizza);
+
+        // 可以取饼了，则通知服务器
+        RestfulClient.builder()
+                .url("hippo/sync-delivery-info")
+                .params("appId",this.appId)
+                .params("assetId",this.assetId)
+                .params("orderNo",this.orderNo)
+                .success(new ISuccess() {
+                    @Override
+                    public void onSuccess(String response) {
+                        final JSONObject resJson =
+                                JSON.parseObject(response);
+                        final int errorNo = resJson.getIntValue("error_no");
+                        if(errorNo == RestfulClient.NO_ERROR){
+                            LogUtil.LogInfoForce("订单: " + orderNo + " 完成");
+                        }else {
+                            LogUtil.LogInfoForce("订单: " + orderNo + "失败, " + resJson.getString("msg"));
+                        }
+                    }
+                })
+                .failure(new IFailure() {
+                    @Override
+                    public void onFailure() {
+                        LogUtil.LogInfoForce("订单: " + orderNo + " 同步发货状态接口失败");
+                    }
+                })
+                .build().post();
     }
 
     /**
@@ -330,11 +361,8 @@ public class ProcessingDelegate extends SmartbroDelegate
             this.mediaPlayer = MediaPlayer.create(getActivity(),what); // 播放叮当的声音
             this.mediaPlayer.start();
 
-            if(what==R.raw.dingding){
-                if("cn".equals(MachineProfile.getInstance().getLanguage()))
-                    this.nextAudioRaw = R.raw.pizzadone;
-                else
-                    this.nextAudioRaw = R.raw.pizzadone_en;
+            if(what==R.raw.pizzadone ){
+                this.nextAudioRaw = R.raw.pizzadone;
             }
         }
 

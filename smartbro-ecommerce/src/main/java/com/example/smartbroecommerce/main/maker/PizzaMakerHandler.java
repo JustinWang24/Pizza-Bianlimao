@@ -154,21 +154,21 @@ public class PizzaMakerHandler extends Handler {
                     break;
                 case MachineStatusOfMakingPizza.WAITING_FOR_PLC_RESET:
                     // 等待PLC执行推新盒子的命令
-//                    LogUtil.LogInfo("等待新的盒子推到位; 通知服务器某个饼的存储位置已经是空的了");
+                    LogUtil.LogInfo("等待新的盒子推到位; 通知服务器某个饼的存储位置已经是空的了");
                     // 通知服务器更新一个饼的位置为false
                     this.confirmPositionIsEmptyToServer();
                     break;
                 case MachineStatusOfMakingPizza.PLC_RESET_OK_FINAL:
                     // 只有在烤多张饼的时候，才会收到这个消息, 表示当前的饼已经完全烤完，可以烤新的一张了
                     this.setProcessStatus(MachineStatusOfMakingPizza.PLC_RESET_OK_FINAL);
-//                    LogUtil.LogInfo("存储位置"+Integer.toString(msg.arg1)+"已经是空的了, 准备烤下一张饼了");
+                    LogUtil.LogInfo("存储位置"+Integer.toString(msg.arg1)+"已经是空的了, 准备烤下一张饼了");
                     break;
                 case MachineStatusOfMakingPizza.ERROR_COMMUNICATION:
                     // 与PLC的通讯故障
                     if(MachineStatusOfMakingPizza.ERROR_COMMUNICATION != this.getCurrentMachineErrorCode()){
                         this.setCurrentMachineErrorCode(MachineStatusOfMakingPizza.ERROR_COMMUNICATION);
                         this.generalErrorHandler(msg);
-//                        LogUtil.LogInfo("收到一个 MachineStatusOfMakingPizza.ERROR_COMMUNICATION 消息");
+                        LogUtil.LogInfo("收到一个 MachineStatusOfMakingPizza.ERROR_COMMUNICATION 消息");
                     }
                     this.setProcessStatus(MachineStatusOfMakingPizza.ERROR_COMMUNICATION);
                     break;
@@ -179,7 +179,7 @@ public class PizzaMakerHandler extends Handler {
                         this.generalErrorHandler(msg);
                         LogUtil.LogInfo("收到一个 MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS 消息: " + Integer.toString(msg.arg1));
                     }
-//                    this.setProcessStatus(MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS);
+                    this.setProcessStatus(MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS);
                     break;
 
                 case MachineStatusOfMakingPizza.INFORM_ERROR_NO_BOX_AT_END:
@@ -204,30 +204,30 @@ public class PizzaMakerHandler extends Handler {
      * 向服务器发送确认某个位置已经卖出的消息
      */
     private void confirmPositionIsEmptyToServer(){
-        RestfulClient.builder()
-                .url("machines/update_stock")
-                .params("muuid", this.machineUuid)
-                .params("positions", Integer.toString(this.currentPositionIndex) + ":false")
-                .success(new ISuccess() {
-                    @Override
-                    public void onSuccess(String response) {
-                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息, 位置: " + Integer.toString(currentPositionIndex));
-                    }
-                })
-                .error(new IError() {
-                    @Override
-                    public void onError(int code, String msg) {
-                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息发生错误, 位置: " + Integer.toString(currentPositionIndex) + ", " + msg);
-                    }
-                })
-                .failure(new IFailure() {
-                    @Override
-                    public void onFailure() {
-                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息失败, 位置: " + Integer.toString(currentPositionIndex));
-                    }
-                })
-                .build()
-                .post();
+//        RestfulClient.builder()
+//                .url("machines/update_stock")
+//                .params("muuid", this.machineUuid)
+//                .params("positions", Integer.toString(this.currentPositionIndex) + ":false")
+//                .success(new ISuccess() {
+//                    @Override
+//                    public void onSuccess(String response) {
+//                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息, 位置: " + Integer.toString(currentPositionIndex));
+//                    }
+//                })
+//                .error(new IError() {
+//                    @Override
+//                    public void onError(int code, String msg) {
+//                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息发生错误, 位置: " + Integer.toString(currentPositionIndex) + ", " + msg);
+//                    }
+//                })
+//                .failure(new IFailure() {
+//                    @Override
+//                    public void onFailure() {
+//                        LogUtil.LogInfo("向服务器发送确认已经卖出的消息失败, 位置: " + Integer.toString(currentPositionIndex));
+//                    }
+//                })
+//                .build()
+//                .post();
     }
 
     /**

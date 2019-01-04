@@ -62,7 +62,7 @@
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"
             android:layout_marginLeft="10dp"
-            android:text="投币器使/禁能"
+            android:text="烤饼"
             />
 
         <android.support.v7.widget.AppCompatButton

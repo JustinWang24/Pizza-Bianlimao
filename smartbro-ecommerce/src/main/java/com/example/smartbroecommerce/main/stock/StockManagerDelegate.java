@@ -26,7 +26,9 @@ import com.example.smartbroecommerce.database.DatabaseManager;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.PositionDao;
+import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.converters.PositionsListDataConverter;
+import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
@@ -61,7 +63,27 @@ public class StockManagerDelegate extends SmartbroDelegate {
      */
     @OnClick(R2.id.rl_start_button_wrap)
     public void onBtnStartClick(){
-        final boolean isDevMode = false;
+
+//        final long productId = 1;
+//        ShoppingCart.getInstance().addProduct(productId,this);
+//
+//        final SmartbroDelegate delegate = new ProcessingDelegate();
+//        Bundle args = new Bundle();
+//        args.putString("orderNo","fLNnTGQ-2019-01-04");
+//        args.putInt("orderId",20);
+//        args.putInt("totalPrice",100);
+//        args.putString("deliveryCode", "123456");
+//        args.putString("appId", "1234");
+//        args.putString("assetId", "jkddtest001");
+//        args.putString("productName", "测试产品");
+//        args.putString("itemId", "jkdd004");
+//        args.putLong("productId", productId);
+//        args.putBoolean("needCallBakingCmd", true);
+//        args.putInt("changes", 0);           // 找零金额
+//        delegate.setArguments(args);
+//        startWithPop(delegate);
+
+        final boolean isDevMode = true;
 
         if(this.isStockUpdated && this.changedPositions.size() > 0){
             BetterToast.getInstance().showText(getActivity(),getString(R.string.msg_need_upload_positions));
