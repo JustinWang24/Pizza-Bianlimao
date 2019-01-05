@@ -17,6 +17,7 @@ import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Product;
+import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
@@ -36,6 +37,7 @@ import java.util.Timer;
  */
 public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListener {
     private Product product = null;
+    private Long productId = null;
 
     private String appId = null;
     private String assetId = null;
@@ -60,7 +62,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     private Timer scanCustomerPaymentCodeTimer = null;
     private BaseTimerTask timerTask = null;
 
-    private final int maxWaitSeconds = 60;  // 最多等待一分钟的时间
+    private final int maxWaitSeconds = 60;  // 最多等待2分钟的时间
     private int scanCounter = 0;            // 当前第几次扫描
     private boolean isPayOrderApiCalled = false; // 表示是否已经调用过 反扫支付接口
     private boolean isOrderHasBeenPaid = false;  // 表示订单是否已经被支付了
@@ -84,10 +86,14 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
+        this._resetLocalVariables();
+
         Bundle args = getArguments();
-        this.product = Product.find(args.getLong("productId"));
+        this.productId = args.getLong("productId");
+        this.product = Product.find(this.productId);
         this.scanCounter = 0;
         if(this.product != null){
+            ShoppingCart.getInstance().addProduct(this.product,this);
             this.productNameText.setText(getString(R.string.text_product_you_select) + this.product.getName());
 
             MachineProfile machineProfile = MachineProfile.getInstance();
@@ -179,6 +185,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
+        }
+        if (this.timerTask != null){
             this.timerTask.cancel();
             this.timerTask = null;
         }
@@ -206,12 +214,14 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         if(this.scanCustomerPaymentCodeTimer != null){
             this.scanCustomerPaymentCodeTimer.cancel();
             this.scanCustomerPaymentCodeTimer = null;
+        }
+
+        if (this.timerTask != null){
             this.timerTask.cancel();
             this.timerTask = null;
         }
 
         this._redirectToDelegate(new ProcessingDelegate());
-        this._resetLocalVariables();
     }
 
     /**
@@ -222,27 +232,52 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         // 停止扫码枪的工作
         try{
             Tx200Client.getClientInstance().clearCode();
+            Thread.sleep(500);
+
+            Bundle args = new Bundle();
+            args.putInt("orderIntegerId",this.orderIntegerId);
+            args.putString("orderNo",this.orderNo);
+            args.putInt("totalPrice",this.actualFee);
+
+            // 用户的付款码
+//            args.putString("deliveryCode", this.customerPaymentCode);
+            args.putString("appId", this.appId);
+            args.putString("assetId", this.assetId);
+//            args.putString("productName", this.product.getName());
+//            args.putString("itemId", this.product.getItemId());
+//            args.putLong("productId", this.productId);
+            args.putBoolean("needCallBakingCmd", true);
+            args.putInt("changes", 0);           // 找零金额
+
+            //        final long productId = 1;
+//        ShoppingCart.getInstance().addProduct(productId,this);
+//
+//        final SmartbroDelegate delegate = new ProcessingDelegate();
+//        Bundle args = new Bundle();
+//        args.putString("orderNo","fLNnTGQ-2019-01-04");
+//        args.putInt("orderId",20);
+//        args.putInt("totalPrice",100);
+//        args.putString("deliveryCode", "123456");
+//        args.putString("appId", "1234");
+//        args.putString("assetId", "jkddtest001");
+//        args.putString("productName", "测试产品");
+//        args.putString("itemId", "jkdd004");
+//        args.putLong("productId", productId);
+//        args.putBoolean("needCallBakingCmd", true);
+//        args.putInt("changes", 0);           // 找零金额
+//        delegate.setArguments(args);
+//        startWithPop(delegate);
+
+            delegate.setArguments(args);
+            startWithPop(delegate);
+
         }catch (Exception e){
             LogUtil.LogStackTrace(e,"859280");
+            BetterToast.getInstance().showText(
+                    getProxyActivity(),
+                    e.getMessage()
+            );
         }
-
-        Bundle args = new Bundle();
-        args.putInt("orderIntegerId",this.orderIntegerId);
-        args.putString("orderNo",this.orderNo);
-        args.putInt("totalPrice",this.actualFee);
-
-        // 用户的付款码
-        args.putString("deliveryCode", this.customerPaymentCode);
-        args.putString("appId", this.appId);
-        args.putString("assetId", this.assetId);
-        args.putString("productName", this.product.getName());
-        args.putString("itemId", this.product.getItemId());
-        args.putLong("productId", this.product.getId());
-        args.putBoolean("needCallBakingCmd", true);
-        args.putInt("changes", 0);           // 找零金额
-
-        delegate.setArguments(args);
-        startWithPop(delegate);
     }
 
     /**

@@ -46,8 +46,6 @@ public class ProcessingDelegate extends SmartbroDelegate
 
     // 和网络通信相关的属性
     private int orderId = -1;
-    private String productItemId = null;
-    private String deliveryCode = null;
     private String orderNo = null;
     private String appId = null;
     private String assetId = null;
@@ -85,8 +83,6 @@ public class ProcessingDelegate extends SmartbroDelegate
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         Bundle args = getArguments();
         this.orderId = args.getInt("orderIntegerId");
-        this.productItemId = args.getString("itemId");
-        this.deliveryCode = args.getString("deliveryCode");
         this.orderNo = args.getString("orderNo");
         this.appId = args.getString("appId");
         this.assetId = args.getString("assetId");
@@ -240,11 +236,14 @@ public class ProcessingDelegate extends SmartbroDelegate
                         break;
                     case MachineStatusOfMakingPizza.ERROR_COMMUNICATION:
                         // PLC 链接中断了
-                        mTimer.cancel();
-                        mTimer = null;
-                        baseTimerTask.cancel();
-                        baseTimerTask = null;
-
+                        if(mTimer != null){
+                            mTimer.cancel();
+                            mTimer = null;
+                        }
+                        if(baseTimerTask != null){
+                            baseTimerTask.cancel();
+                            baseTimerTask = null;
+                        }
                         startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS:
@@ -254,10 +253,14 @@ public class ProcessingDelegate extends SmartbroDelegate
                     case MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT:
                         if(pizzaMakerHandler.isLastOneDone()){
                             _showWaitingForPlateAnimation();    // 显示等待装盘的动画
-                            mTimer.cancel();
-                            mTimer = null;
-                            baseTimerTask.cancel();
-                            baseTimerTask = null;
+                            if(mTimer != null){
+                                mTimer.cancel();
+                                mTimer = null;
+                            }
+                            if(baseTimerTask != null){
+                                baseTimerTask.cancel();
+                                baseTimerTask = null;
+                            }
                             // 这个时候，还没有把盒子推出来，因此需要检查
                             waitThenRedirect();
                         }

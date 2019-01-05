@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbroecommerce.R;
@@ -27,7 +28,7 @@ public class HippoPaymentFailedDelegate extends SmartbroDelegate{
      * 重新购买按钮
      */
     @BindView(R2.id.tv_back_to_products_list_in_payment_failed)
-    AppCompatTextView backToProductList;
+    Button backToProductList;
 
     @OnClick(R2.id.tv_back_to_products_list_in_payment_failed)
     void onBackToProductListClicked(){

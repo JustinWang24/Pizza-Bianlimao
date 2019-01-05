@@ -14,7 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="560dp"
+        android:layout_marginTop="660dp"
         android:text="请扫码或输入取货码:"
         android:textColor="@color/black"
         android:textSize="40sp" />

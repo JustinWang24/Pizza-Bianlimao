@@ -30,7 +30,6 @@
                 android:textSize="32sp" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
     <!-- 产品名称 -->
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_product_name_in_payment_failed"
@@ -40,15 +39,18 @@
         android:textColor="@color/black"
         android:layout_marginTop="680dp"
         android:textSize="44sp" />
-
-    <!-- 重新购买 -->
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/tv_back_to_products_list_in_payment_failed"
+    <!-- 重新购买按钮 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:gravity="center"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="1210dp"
-        android:textSize="44sp" />
-
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1310dp"
+        android:gravity="center_horizontal">
+        <Button
+            android:id="@+id/tv_back_to_products_list_in_payment_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/hippo_reorder_button"
+            android:gravity="center"
+            android:paddingBottom="8dp"/>
+    </LinearLayout>
 </RelativeLayout>

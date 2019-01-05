@@ -1,5 +1,6 @@
 package com.taihua.pishamachine.MicroLightScanner;
 
+import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.ReportModeParserImpl;
 import com.taihua.pishamachine.MicroLightScanner.ParserImpl.ScannerControlParserImpl;
@@ -101,9 +102,14 @@ public class Tx200Client {
      */
     public CommandExecuteResult scan(){
         final byte[] command = ScannerCommand.GetReadQrCodeCommand();
-        final byte[] resultBuffer = new byte[100]; // 收信的字节缓冲区
-        final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 300);
-        return new CommandExecuteResult(readSize, resultBuffer, new QrCodeParserImpl());
+        final byte[] resultBuffer = new byte[200]; // 收信的字节缓冲区
+        try{
+            final  int readSize = this.serialPortHelper.sentData(command, resultBuffer, 300);
+            return new CommandExecuteResult(readSize, resultBuffer, new QrCodeParserImpl());
+        }catch (Exception e){
+            LogUtil.LogException(e);
+            return new CommandExecuteResult(0, resultBuffer, new QrCodeParserImpl());
+        }
     }
 
     /**

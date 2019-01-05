@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/black"
-        android:layout_marginTop="680dp"
+        android:layout_marginTop="780dp"
         android:textSize="44sp" />
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -46,8 +46,8 @@
         android:layout_height="194dp"
         android:background="@android:color/transparent"
         android:orientation="vertical"
-        android:layout_marginTop="845dp"
-        android:layout_marginLeft="220dp"
+        android:layout_marginTop="975dp"
+        android:layout_marginLeft="222dp"
         android:id="@+id/ll_central_area">
 
         <!-- 扫描的gif动画 -->

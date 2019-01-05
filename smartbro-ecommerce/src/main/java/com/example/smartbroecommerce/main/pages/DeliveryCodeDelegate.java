@@ -18,8 +18,11 @@ import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Product;
+import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.machine.InitDelegate;
+import com.example.smartbroecommerce.main.checkout.HippoPaymentFailedDelegate;
 import com.example.smartbroecommerce.main.maker.ErrorHappendDuringMakingDelegate;
+import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
@@ -88,6 +91,20 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
         }else if("#333".equals(codeString)){
             // 暂停设备运行密码
             startWithPop(new InitDelegate());
+        }else if("#666".equals(codeString)){
+//            final long productId = 1;
+//            ShoppingCart.getInstance().addProduct(productId,this);
+//            final SmartbroDelegate delegate = new ProcessingDelegate();
+//            Bundle args = new Bundle();
+//            args.putString("orderNo","fLNnTGQ-2019-01-04");
+//            args.putInt("orderId",20);
+//            args.putString("appId", "1234");
+//            args.putString("assetId", "jkddtest001");
+//            args.putBoolean("needCallBakingCmd", true);
+//            args.putInt("changes", 0);           // 找零金额
+//            delegate.setArguments(args);
+//            startWithPop(delegate);
+            startWithPop(new HippoPaymentFailedDelegate());
         }else{
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));

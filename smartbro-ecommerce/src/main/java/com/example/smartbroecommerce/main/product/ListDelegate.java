@@ -125,18 +125,6 @@ public class ListDelegate extends SmartbroDelegate
         this.selectedProduct = product;
     }
 
-    /*
-     * 当帮助文字被点击时
-     */
-//    @OnClick(R2.id.rl_help_wrap)
-//    void onHelpTextClicked(){
-//        if(!this.isHelpButtonClicked && !FastClickProtector.isFastDoubleClick()){
-//            this.isHelpButtonClicked = true;
-//            startWithPop(new DiscoverDelegate());
-//        }
-        // 原来的帮助文字， 现在已经改成显示购物车中的物品，所有没有任何点击的响应了
-//    }
-
     /**
      * 当购物车图标被点击时
      */
@@ -175,6 +163,7 @@ public class ListDelegate extends SmartbroDelegate
 //            .create(
 //                    this.refreshLayout,this.recyclerView,new ProductsListDataConverter(),null
 //            );
+        ShoppingCart.getInstance().clear();
     }
 
     /**
