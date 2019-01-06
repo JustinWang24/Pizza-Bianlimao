@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.LinearLayoutCompat
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_machine_home_wrap"
+    android:id="@+id/ads_banner_wrap"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:layout_height="wrap_content"
+    android:gravity="top"
+    >
     <com.bigkoo.convenientbanner.ConvenientBanner
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/banner_home">
+        android:layout_height="525dp"
+        android:id="@+id/ads_banner">
     </com.bigkoo.convenientbanner.ConvenientBanner>
-
-</LinearLayout>
+</android.support.v7.widget.LinearLayoutCompat>

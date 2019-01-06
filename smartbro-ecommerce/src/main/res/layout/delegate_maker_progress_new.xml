@@ -12,8 +12,8 @@
         android:layout_height="194dp"
         android:background="@android:color/transparent"
         android:orientation="vertical"
-        android:layout_marginTop="945dp"
-        android:layout_marginLeft="222dp"
+        android:layout_marginTop="975dp"
+        android:layout_marginLeft="228dp"
         android:id="@+id/ll_central_area">
         <!-- pizza制作的gif动画 -->
         <pl.droidsonroids.gif.GifImageView

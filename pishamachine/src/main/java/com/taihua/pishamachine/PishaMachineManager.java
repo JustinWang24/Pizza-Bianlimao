@@ -120,9 +120,6 @@ public class PishaMachineManager {
         this.mSerialPortHelper = null;
     }
 
-
-    //烤饼
-
     /**
      * 烤饼的程序
      * @param nIndex 饼所在的位置 1 - 40 之间

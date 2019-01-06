@@ -50,7 +50,7 @@ dependencies {
     // 添加的依赖关系，这里手工改成 annotationProcessor
     annotationProcessor project(':Smartbro-Compiler')
     // Facebook的数据库查看工具， 仅仅开发期间使用
-    compile 'com.facebook.stetho:stetho:1.5.0'
-    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+//    compile 'com.facebook.stetho:stetho:1.5.0'
+//    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 //    compileOnly 'com.google.android.things:androidthings:+'
 }

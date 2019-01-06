@@ -8,10 +8,12 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IFailure;
 import com.example.smartbro.net.callback.ISuccess;
+import com.example.smartbro.ui.banner.BannerCreator;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
@@ -21,23 +23,23 @@ import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.machine.InitDelegate;
 import com.example.smartbroecommerce.main.checkout.HippoPaymentFailedDelegate;
-import com.example.smartbroecommerce.main.maker.ErrorHappendDuringMakingDelegate;
-import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
+import com.example.smartbroecommerce.utils.BannerTool;
 import com.example.smartbroecommerce.utils.BetterToast;
 
 import java.util.Date;
 import java.util.Timer;
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
 /**
  * Created by Justin Wang from SmartBro on 10/1/18.
  * 取货码页面
  */
 
-public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerListener {
+public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerListener, OnItemClickListener {
 
     @BindView(R2.id.et_delivery_code)
     TextView deliveryCode = null;
@@ -72,6 +74,9 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     @BindView(R2.id.btn_key_cancel_delivery)
     Button btnKeyCancel = null;
 
+    @BindView(R2.id.ads_banner)
+    ConvenientBanner<String> convenientBanner;
+
     private Timer timer = null;
     private long openTime = 0;
 
@@ -105,7 +110,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 //            delegate.setArguments(args);
 //            startWithPop(delegate);
             startWithPop(new HippoPaymentFailedDelegate());
-        }else{
+        }else if(codeString.length() > 3){
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));
             // 先取得设备的id
@@ -142,23 +147,39 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private void onCheckCodeSuccess(String response, String deliveryCode){
         final JSONObject res = JSON.parseObject(response);
         final int errorNo = res.getInteger("error_no");
+        final int orderIntegerId = res.getInteger("orderIntegerId");
+        final int totalPrice = res.getInteger("totalPrice");
         final String itemId = res.getString("p");
         final String msg = res.getString("msg");
+        final String orderNo = res.getString("orderNo");
         if(errorNo == RestfulClient.NO_ERROR){
             /*
             这个方法实际会执行一共2个接口的调用，在验证 自提码 的准确性之后，
             进行锁定商品接口的调用，然后把被锁定的商品的 itemId回送给上位机程序
              */
             final Product product = Product.find(itemId);
+            if(product != null){
+                ShoppingCart.getInstance().addProduct(product,null);
+                // 跳转到确认支付页面
+                Bundle args = new Bundle();
+                args.putString("itemId",itemId);                // 产品的 itemId
+                args.putString("deliveryCode", deliveryCode);   // 自提码
+                args.putInt("orderIntegerId",orderIntegerId);
+                args.putString("orderNo",orderNo);
+                args.putInt("totalPrice",totalPrice);
+                args.putBoolean("needCallBakingCmd", true);
+                args.putInt("changes", 0);                      // 找零金额
 
-            // 跳转到确认支付页面
-            Bundle args = new Bundle();
-            args.putString("itemId",itemId);                // 产品的 itemId
-            args.putString("deliveryCode", deliveryCode);   // 自提码
+                SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
+                delegate.setArguments(args);
+                startWithPop(delegate);
+            }else{
+                BetterToast.getInstance().showText(
+                        getActivity(),
+                        "自提码指定的产品已经售完"
+                );
+            }
 
-            SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
-            delegate.setArguments(args);
-            startWithPop(delegate);
         }else {
             // 清除已经输入的付款码
             this.deliveryCode.setText(msg);
@@ -210,6 +231,15 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
+        BannerCreator.setDefault(
+                this.convenientBanner,
+                BannerTool.GetInstance().getBannerImages(),
+                this
+        );
+    }
+
+    @Override
+    public void onItemClick(int position) {
 
     }
 

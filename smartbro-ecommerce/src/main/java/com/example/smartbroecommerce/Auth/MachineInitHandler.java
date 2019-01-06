@@ -11,6 +11,7 @@ import com.example.smartbroecommerce.database.PaymentMethod;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ShoppingCartItem;
+import com.example.smartbroecommerce.utils.BannerTool;
 import java.util.Iterator;
 
 /**
@@ -141,6 +142,20 @@ public class MachineInitHandler {
 
         // CartItem也要清空
         ShoppingCartItem.flush();
+
+        // 获取发来的广告
+        final JSONArray ads = machineJson.getJSONArray("ads");
+        for (Iterator iterator = ads.iterator(); iterator.hasNext();){
+            JSONObject adJson = (JSONObject)iterator.next();
+            BannerTool.GetInstance()
+                    .getBannerImages()
+                    .add(adJson.getString("downloadUrl"));
+        }
+
+//        final ArrayList<String> imgs = BannerTool.GetInstance().getBannerImages();
+//        for (int i = 0; i < imgs.size(); i++) {
+//            Log.i("Info","广告图片: " + imgs.get(i));
+//        }
 
         return machineId;
     }

@@ -6,6 +6,7 @@
     android:background="@mipmap/bianlimao_main_bg1"
     android:gravity="center"
     android:orientation="vertical">
+    <include layout="@layout/item_ads_delegate" />
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_page_title"
         android:layout_width="match_parent"

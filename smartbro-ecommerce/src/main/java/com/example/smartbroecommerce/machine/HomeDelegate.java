@@ -88,8 +88,6 @@ public class HomeDelegate extends SmartbroDelegate implements OnItemClickListene
     }
 
     private void initMachineAdsBanner(){
-//        Log.i("HomeDelegate 加载图片",Boolean.toString(isBannerCreated));
-
         if(!isBannerCreated){
             final HomeDelegate that = this;
             RestfulClient.builder()

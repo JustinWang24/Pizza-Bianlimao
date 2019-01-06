@@ -73,6 +73,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     AppCompatTextView productNameText;
     @BindView(R2.id.tv_product_price_in_checkout)
     AppCompatTextView productPriceText;
+    @BindView(R2.id.tv_time_seconds_text)
+    AppCompatTextView timeSecondsText;
 
     @OnClick(R2.id.tv_toolbar_cancel_checkout_text)
     void onCancelCheckoutClicked(){
@@ -107,26 +109,26 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
 
             // 通知服务器，以便创建一个新的订单
             RestfulClient.builder()
-                    .url("hippo/create-order")
-                    .params("appId", this.appId)
-                    .params("assetId",this.assetId)
-                    .params("itemId",this.product.getItemId())
-                    .params("itemName",this.product.getName())
-                    .params("price",Integer.toString(priceInCents))   // 以分为单位
-                    .success(new ISuccess() {
-                        @Override
-                        public void onSuccess(String response) {
-                            onCreateOrderCallSuccess(response);
-                        }
-                    })
-                    .failure(new IFailure() {
-                        @Override
-                        public void onFailure() {
-                            BetterToast.getInstance()
-                                    .showText(getProxyActivity(),"系统维护中 无法创建订单 请稍候再试试");
-                        }
-                    })
-                    .build().post();
+                .url("hippo/create-order")
+                .params("appId", this.appId)
+                .params("assetId",this.assetId)
+                .params("itemId",this.product.getItemId())
+                .params("itemName",this.product.getName())
+                .params("price",Integer.toString(priceInCents))   // 以分为单位
+                .success(new ISuccess() {
+                    @Override
+                    public void onSuccess(String response) {
+                        onCreateOrderCallSuccess(response);
+                    }
+                })
+                .failure(new IFailure() {
+                    @Override
+                    public void onFailure() {
+                        BetterToast.getInstance()
+                                .showText(getProxyActivity(),"系统维护中 无法创建订单 请稍候再试试");
+                    }
+                })
+                .build().post();
         }
     }
 
@@ -203,7 +205,6 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
      * 返回产品列表页面
      */
     protected void backToProductList(){
-        this._resetLocalVariables();
         startWithPop(new ListDelegate());
     }
 
@@ -233,44 +234,16 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         try{
             Tx200Client.getClientInstance().clearCode();
             Thread.sleep(500);
-
             Bundle args = new Bundle();
             args.putInt("orderIntegerId",this.orderIntegerId);
             args.putString("orderNo",this.orderNo);
             args.putInt("totalPrice",this.actualFee);
-
-            // 用户的付款码
-//            args.putString("deliveryCode", this.customerPaymentCode);
             args.putString("appId", this.appId);
             args.putString("assetId", this.assetId);
-//            args.putString("productName", this.product.getName());
-//            args.putString("itemId", this.product.getItemId());
-//            args.putLong("productId", this.productId);
             args.putBoolean("needCallBakingCmd", true);
             args.putInt("changes", 0);           // 找零金额
-
-            //        final long productId = 1;
-//        ShoppingCart.getInstance().addProduct(productId,this);
-//
-//        final SmartbroDelegate delegate = new ProcessingDelegate();
-//        Bundle args = new Bundle();
-//        args.putString("orderNo","fLNnTGQ-2019-01-04");
-//        args.putInt("orderId",20);
-//        args.putInt("totalPrice",100);
-//        args.putString("deliveryCode", "123456");
-//        args.putString("appId", "1234");
-//        args.putString("assetId", "jkddtest001");
-//        args.putString("productName", "测试产品");
-//        args.putString("itemId", "jkdd004");
-//        args.putLong("productId", productId);
-//        args.putBoolean("needCallBakingCmd", true);
-//        args.putInt("changes", 0);           // 找零金额
-//        delegate.setArguments(args);
-//        startWithPop(delegate);
-
             delegate.setArguments(args);
             startWithPop(delegate);
-
         }catch (Exception e){
             LogUtil.LogStackTrace(e,"859280");
             BetterToast.getInstance().showText(
@@ -298,7 +271,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             }
 
             // 每隔 2 秒钟读取一下串口 或者查询一下服务器
-            this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,2000);
+            this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,1000);
         }catch (Exception e){
             BetterToast.getInstance().showText(getProxyActivity(),"扫码器连接失败");
         }
@@ -310,8 +283,16 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             @Override
             public void run() {
                 if(scanCounter <= maxWaitSeconds){
+                    final String secondsText;
+                    if(scanCounter > 50){
+                        secondsText = "0" + Integer.toString( 60 - scanCounter);
+                    }else{
+                        secondsText = Integer.toString(60 - scanCounter);
+                    }
+
                     scanCounter++;
 
+                    timeSecondsText.setText(secondsText);
                     if(customerPaymentCode == null){
                         // 在这里打开扫码枪的扫描端口 开始循环读取扫描信息
                         try{
@@ -321,7 +302,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                                 customerPaymentCode = QrCodeString;
                                 // 读取到之后，进行清空操作
                                 Tx200Client.getClientInstance().clearCode();
-                                Thread.sleep(300);
+                                Thread.sleep(200);
                                 // 再启动扫码枪
                                 Tx200Client.getClientInstance().activateQrReader();
                             }
@@ -424,9 +405,11 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             // 查询的结果表示调用成功，查看下一步如何操作
             if(RestfulClient.ACTION_GO_NEXT.equals(nextActionString)){
                 // 表示支付已经确认，可以去烤饼了
-                this.isOrderHasBeenPaid = true;
-                LogUtil.LogInfoForce("表示支付已经确认，可以去烤饼了 1111 " + this.orderNo);
-                this.goToNextView();
+                if (this.orderNo != null){
+                    this.isOrderHasBeenPaid = true;
+                    LogUtil.LogInfoForce("表示支付已经确认，可以去烤饼了 1111 " + this.orderNo);
+                    this.goToNextView();
+                }
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
                 LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);

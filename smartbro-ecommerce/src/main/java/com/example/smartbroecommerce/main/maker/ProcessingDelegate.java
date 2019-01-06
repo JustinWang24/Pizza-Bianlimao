@@ -145,18 +145,30 @@ public class ProcessingDelegate extends SmartbroDelegate
         this.makePizza(0);
 
         /* 开始监听 */
-        this.baseTimerTask = new BaseTimerTask(this);
-        this.mTimer = new Timer(true);
-        this.mTimer.scheduleAtFixedRate(this.baseTimerTask, 2000, 1000);
+        if(this.mTimer == null){
+            this.mTimer = new Timer(true);
+            this.baseTimerTask = new BaseTimerTask(this);
+            this.mTimer.scheduleAtFixedRate(this.baseTimerTask, 2000, 1000);
+        }
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         // 跳转到其他的delegate前, 停止设备状态的查询
         this.pishaMachineManager.stopStatusChecking();
+        if(this.mTimer != null){
+            this.mTimer.cancel();
+            this.mTimer = null;
+            this.baseTimerTask.cancel();
+            this.baseTimerTask = null;
+        }
+        super.onDestroyView();
     }
 
+    /**
+     * 真正执行烤饼的方法
+     * @param taskIndex
+     */
     private void makePizza(int taskIndex){
         // 能够执行到这里，表示肯定不是刚刚开机了
         IS_JUST_POWER_ON = false;
@@ -299,32 +311,35 @@ public class ProcessingDelegate extends SmartbroDelegate
     private void _showTakePizzaAnimation(){
         this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.please_take_pizza);
 
-        // 可以取饼了，则通知服务器
-        RestfulClient.builder()
-                .url("hippo/sync-delivery-info")
-                .params("appId",this.appId)
-                .params("assetId",this.assetId)
-                .params("orderNo",this.orderNo)
-                .success(new ISuccess() {
-                    @Override
-                    public void onSuccess(String response) {
-                        final JSONObject resJson =
-                                JSON.parseObject(response);
-                        final int errorNo = resJson.getIntValue("error_no");
-                        if(errorNo == RestfulClient.NO_ERROR){
-                            LogUtil.LogInfoForce("订单: " + orderNo + " 完成");
-                        }else {
-                            LogUtil.LogInfoForce("订单: " + orderNo + "失败, " + resJson.getString("msg"));
+        // MachineStatusOfMakingPizza.INFORM_TO_TAKE_PIZZA_READY 消息已经收到
+        if(!pizzaDoneAudioHasBeenPlayed){
+            // 可以取饼了，则通知服务器 这个操作只做一次就行
+            RestfulClient.builder()
+                    .url("hippo/sync-delivery-info")
+                    .params("appId",this.appId)
+                    .params("assetId",this.assetId)
+                    .params("orderNo",this.orderNo)
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+                            final JSONObject resJson =
+                                    JSON.parseObject(response);
+                            final int errorNo = resJson.getIntValue("error_no");
+                            if(errorNo == RestfulClient.NO_ERROR){
+                                LogUtil.LogInfoForce("订单: " + orderNo + " 完成");
+                            }else {
+                                LogUtil.LogInfoForce("订单: " + orderNo + "失败, " + resJson.getString("msg"));
+                            }
                         }
-                    }
-                })
-                .failure(new IFailure() {
-                    @Override
-                    public void onFailure() {
-                        LogUtil.LogInfoForce("订单: " + orderNo + " 同步发货状态接口失败");
-                    }
-                })
-                .build().post();
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+                            LogUtil.LogInfoForce("订单: " + orderNo + " 同步发货状态接口失败");
+                        }
+                    })
+                    .build().post();
+        }
     }
 
     /**
@@ -332,15 +347,13 @@ public class ProcessingDelegate extends SmartbroDelegate
      */
     private void waitThenRedirect(){
         final int errorCode = this.pizzaMakerHandler.getCurrentMachineErrorCode();
-
         // 关闭串口
         this.pishaMachineManager.closeSerialPort();
-
         // 关闭音频播放器
         if (this.mediaPlayer != null){
             this.mediaPlayer.release();
+            this.mediaPlayer = null;
         }
-
         Bundle args = new Bundle();
         args.putInt("errorCode",errorCode);   // 订单ID
 
@@ -363,10 +376,10 @@ public class ProcessingDelegate extends SmartbroDelegate
             this.isPlayingAudio = true;
             this.mediaPlayer = MediaPlayer.create(getActivity(),what); // 播放叮当的声音
             this.mediaPlayer.start();
-
-            if(what==R.raw.pizzadone ){
-                this.nextAudioRaw = R.raw.pizzadone;
-            }
+//
+//            if(what==R.raw.pizzadone ){
+//                this.nextAudioRaw = R.raw.pizzadone;
+//            }
         }
 
         this.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

@@ -6,12 +6,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.smartbro.delegates.SmartbroDelegate;
+import com.example.smartbro.ui.banner.BannerCreator;
 import com.example.smartbro.ui.recycler.DataConvertor;
 import com.example.smartbro.ui.recycler.MultipleViewHolder;
 import com.example.smartbro.utils.FastClickProtector;
@@ -31,6 +34,7 @@ import com.example.smartbroecommerce.main.pages.DeliveryCodeDelegate;
 import com.example.smartbroecommerce.main.pages.StopWorkingDelegate;
 import com.example.smartbroecommerce.main.pages.UnlockScreenDelegate;
 
+import com.example.smartbroecommerce.utils.BannerTool;
 import com.joanzapata.iconify.widget.IconTextView;
 import com.taihua.pishamachine.LogUtil;
 
@@ -41,6 +45,7 @@ import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
 /**
  * Created by Justin Wang from SmartBro on 12/12/17.
@@ -48,7 +53,7 @@ import butterknife.OnClick;
  */
 
 public class ListDelegate extends SmartbroDelegate
-        implements BaseQuickAdapter.RequestLoadMoreListener, ITimerListener{
+        implements BaseQuickAdapter.RequestLoadMoreListener, ITimerListener, OnItemClickListener{
     // 页面的显示控件开始
     @BindView(R2.id.ll_product_listing_wrap)
     RelativeLayout wrapper = null;
@@ -88,6 +93,12 @@ public class ListDelegate extends SmartbroDelegate
     private long lastTimeUnlockBtnClicked = new Date().getTime();
 
     private boolean cartEmptyMessageShowed = false;
+
+    /*
+     * 页面顶部的广告栏
+     */
+    @BindView(R2.id.ads_banner)
+    ConvenientBanner<String> convenientBanner;
 
     /**
      * 保存所有产品的Holder
@@ -163,7 +174,21 @@ public class ListDelegate extends SmartbroDelegate
 //            .create(
 //                    this.refreshLayout,this.recyclerView,new ProductsListDataConverter(),null
 //            );
+        BannerCreator.setDefault(
+                convenientBanner,
+                BannerTool.GetInstance().getBannerImages(),
+                this
+        );
         ShoppingCart.getInstance().clear();
+    }
+
+    /**
+     * 当广告位为点击的时候
+     * @param position
+     */
+    @Override
+    public void onItemClick(int position) {
+
     }
 
     /**

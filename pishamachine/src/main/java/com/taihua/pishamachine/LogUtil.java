@@ -20,7 +20,7 @@ public class
 LogUtil {
 
     private static final String FILE_NAME = "/PisaMessage.txt";
-    private static Boolean MYLOG_SWITCH = true; // 日志文件总开关
+    private static Boolean MYLOG_SWITCH = false; // 日志文件总开关
 
     public static void i(String tag, String str) {
         Log.i(tag, str.toString());
