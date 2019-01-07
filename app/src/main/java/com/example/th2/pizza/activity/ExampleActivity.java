@@ -32,11 +32,6 @@ public class ExampleActivity extends ProxyActivity implements IAuthListener, ILa
         if(actionBar != null){
             actionBar.hide();
         }
-
-//        MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rest);
-//        mediaPlayer.start();
-
-//        startService(new Intent(this, BasicService.class));
     }
 
     @SuppressWarnings("SpellCheckingInspection")

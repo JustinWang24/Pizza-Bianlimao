@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -27,7 +26,6 @@ import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ProductDao;
 import com.example.smartbroecommerce.database.ShoppingCart;
-import com.example.smartbroecommerce.machine.HomeDelegate;
 import com.example.smartbroecommerce.main.checkout.ByHippoAppDelegate;
 import com.example.smartbroecommerce.main.converters.ProductsListDataConverter;
 import com.example.smartbroecommerce.main.pages.DeliveryCodeDelegate;
@@ -36,8 +34,6 @@ import com.example.smartbroecommerce.main.pages.UnlockScreenDelegate;
 
 import com.example.smartbroecommerce.utils.BannerTool;
 import com.joanzapata.iconify.widget.IconTextView;
-import com.taihua.pishamachine.LogUtil;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +41,7 @@ import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 
 /**
@@ -89,6 +86,7 @@ public class ListDelegate extends SmartbroDelegate
 
     // 上一次点击的时间戳
     private Timer mTimer = null;
+    private BaseTimerTask baseTimerTask = null;
     private int unlockBtnClickedCount = 0;
     private long lastTimeUnlockBtnClicked = new Date().getTime();
 
@@ -152,12 +150,12 @@ public class ListDelegate extends SmartbroDelegate
             // 这也算一次点击， 应该从新计时
             this.updateLastClickActionTimeStamp();
         }else {
+            this.stopAllTimer();
             // 跳转到支付界面
             Bundle args = new Bundle();
             args.putLong("productId",this.selectedProduct.getId());
             ByHippoAppDelegate delegate = new ByHippoAppDelegate();
             delegate.setArguments(args);
-
             startWithPop(delegate);
         }
     }
@@ -224,6 +222,7 @@ public class ListDelegate extends SmartbroDelegate
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        this.stopAllTimer();
     }
 
     /**
@@ -238,9 +237,8 @@ public class ListDelegate extends SmartbroDelegate
     public void onResume() {
         super.onResume();
 
-        int errorValue = 0;
         Bundle args = getArguments();
-        errorValue = args.getInt("errorCode");
+        final int errorValue = args.getInt("errorCode");
 
         if(errorValue == 0){
             // 表示没有读取到任何错误 PLC
@@ -248,13 +246,13 @@ public class ListDelegate extends SmartbroDelegate
             // 初始化上一次点击的时间戳
             this.updateLastClickActionTimeStamp();
             // 开始跑起Timer
-            final BaseTimerTask task = new BaseTimerTask(this);
+            this.baseTimerTask = new BaseTimerTask(this);
             this.mTimer = new Timer(true);
-            this.mTimer.schedule(task,1000, 5000);
+            this.mTimer.scheduleAtFixedRate(this.baseTimerTask,1000, 5000);
         }else {
-            LogUtil.LogInfo("产品列表页面中的错误检查: " + Integer.toString(errorValue));
             if(errorValue > 0){
                 // 表示发生了错误, 需要上报服务器, 同时然后跳转到等待页面
+                this.stopAllTimer();
                 startWithPop(new StopWorkingDelegate());
             }
         }
@@ -264,8 +262,17 @@ public class ListDelegate extends SmartbroDelegate
     public void onPause() {
         super.onPause();
         this.updateLastClickActionTimeStamp();
+        this.stopAllTimer();
+    }
+
+    private void stopAllTimer(){
         if(this.mTimer != null){
             this.mTimer.cancel();
+            this.mTimer = null;
+        }
+        if (this.baseTimerTask != null){
+            this.baseTimerTask.cancel();
+            this.baseTimerTask = null;
         }
     }
 
@@ -336,10 +343,6 @@ public class ListDelegate extends SmartbroDelegate
     @Override
     public void onLoadMoreRequested() {
 
-    }
-
-    private void backToHome(){
-        startWithPop(new HomeDelegate());
     }
 
     /**

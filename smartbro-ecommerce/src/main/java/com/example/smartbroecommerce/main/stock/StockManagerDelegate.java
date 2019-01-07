@@ -26,9 +26,7 @@ import com.example.smartbroecommerce.database.DatabaseManager;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.PositionDao;
-import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.converters.PositionsListDataConverter;
-import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.utils.BetterToast;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
@@ -174,7 +172,6 @@ public class StockManagerDelegate extends SmartbroDelegate {
         inputMethodManager.hideSoftInputFromWindow(rootView.getWindowToken(),0);
 
         final Bundle args = getArguments();
-
 
         if(args.getBoolean("refreshMachineData")){
             // 需要强制的去服务器进行数据采集与更新

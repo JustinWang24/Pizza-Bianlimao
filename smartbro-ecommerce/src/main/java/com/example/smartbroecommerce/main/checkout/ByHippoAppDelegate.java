@@ -67,6 +67,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     private boolean isPayOrderApiCalled = false; // 表示是否已经调用过 反扫支付接口
     private boolean isOrderHasBeenPaid = false;  // 表示订单是否已经被支付了
 
+    private boolean isExceptionReported = false;
+
     @BindView(R2.id.tv_toolbar_cancel_checkout_text)
     AppCompatTextView cancelCheckoutText;
     @BindView(R2.id.tv_product_name_in_checkout)
@@ -245,7 +247,6 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             delegate.setArguments(args);
             startWithPop(delegate);
         }catch (Exception e){
-            LogUtil.LogStackTrace(e,"859280");
             BetterToast.getInstance().showText(
                     getProxyActivity(),
                     e.getMessage()
@@ -274,6 +275,10 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             this.scanCustomerPaymentCodeTimer.schedule(this.timerTask,1000,1000);
         }catch (Exception e){
             BetterToast.getInstance().showText(getProxyActivity(),"扫码器连接失败");
+            if(!this.isExceptionReported){
+                this.isExceptionReported = true;
+                sentryCapture(e);
+            }
         }
     }
 

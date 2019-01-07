@@ -1,6 +1,5 @@
 package com.taihua.pishamachine;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,13 +28,10 @@ LogUtil {
     public static void LogException(Exception e) {
         if (MYLOG_SWITCH) {
             StringWriter sw = new StringWriter();
-
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String str = sw.toString();
             writeException(str);
-        } else {
-            e.printStackTrace();
         }
     }
 

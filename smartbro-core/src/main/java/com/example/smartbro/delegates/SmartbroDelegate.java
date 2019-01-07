@@ -2,12 +2,19 @@ package com.example.smartbro.delegates;
 import com.example.smartbro.activities.ProxyActivity;
 import java.util.Date;
 
+import io.sentry.Sentry;
+import io.sentry.android.AndroidSentryClientFactory;
+import io.sentry.event.Breadcrumb;
+import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.event.UserBuilder;
+
 /**
  * Created by Justin Wang from SmartBro on 3/12/17.
  */
 
 public abstract class SmartbroDelegate extends PermissionCheckerDelegate {
 
+    private final static String sentryDSN = "https://54afde81fc484432a91c2ef3da2f8f7c@sentry.io/1365642";
     protected long lastClickActionTimeStamp = 0;
 
     protected void updateLastClickActionTimeStamp(){
@@ -40,5 +47,27 @@ public abstract class SmartbroDelegate extends PermissionCheckerDelegate {
     public int getColorIntByName(String colorName){
         int result = 0;
         return result;
+    }
+
+    public void sentryCapture(String s){
+        Sentry.init(sentryDSN, new AndroidSentryClientFactory(getContext()));
+        Sentry.getContext().recordBreadcrumb(
+                new BreadcrumbBuilder().setMessage("First test").build()
+        );
+        Sentry.getContext().setUser(
+                new UserBuilder().setEmail("justinwang24@yahoo.com.au").build()
+        );
+        Sentry.capture(s);
+    }
+
+    public void sentryCapture(Exception e){
+        Sentry.init(sentryDSN, new AndroidSentryClientFactory(getContext()));
+        Sentry.getContext().recordBreadcrumb(
+                new BreadcrumbBuilder().setMessage("First test").build()
+        );
+        Sentry.getContext().setUser(
+                new UserBuilder().setEmail("justinwang24@yahoo.com.au").build()
+        );
+        Sentry.capture(e);
     }
 }

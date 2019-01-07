@@ -18,8 +18,8 @@ public class MyApp extends Application{
          * 初始化并加载系统的配置信息
          */
         Smartbro.init(this)
-                .withApiHost("http://boss.htlc-kj.com/api/")
-//                .withApiHost("http://htlc.smartbro.com.au/api/")
+//                .withApiHost("http://boss.htlc-kj.com/api/")
+                .withApiHost("http://htlc.smartbro.com.au/api/")
 //                .withApiHost("http://rap.taobao.org/mockjsdata/20889/api/")
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontSmartBroModule())
