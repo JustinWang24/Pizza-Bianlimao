@@ -302,7 +302,7 @@ public class ProcessingDelegate extends SmartbroDelegate
      * 显示等待装盘的动画
      */
     private void _showWaitingForPlateAnimation(){
-        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.putting_pizza_in_plate);
+//        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.putting_pizza_in_plate);
     }
 
     /**
