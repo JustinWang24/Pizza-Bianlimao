@@ -267,7 +267,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
 
             // 初始化定时器
             if(this.scanCustomerPaymentCodeTimer == null){
-                this.scanCustomerPaymentCodeTimer = new Timer(true);
+                this.scanCustomerPaymentCodeTimer = new Timer();
                 this.timerTask = new BaseTimerTask(this);
             }
 

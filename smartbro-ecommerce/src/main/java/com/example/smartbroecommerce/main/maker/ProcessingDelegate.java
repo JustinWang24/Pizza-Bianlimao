@@ -127,7 +127,9 @@ public class ProcessingDelegate extends SmartbroDelegate
     @Override
     public void redirectToDelegate(SmartbroDelegate delegate) {
         // 显示再见文本
-        this.echo(getString(R.string.text_all_good), false);
+//        this.echo(getString(R.string.text_all_good), false);
+
+        this.stopTimer();
 
         for (Position position : this.positions) {
             position.disable();
@@ -146,7 +148,7 @@ public class ProcessingDelegate extends SmartbroDelegate
 
         /* 开始监听 */
         if(this.mTimer == null){
-            this.mTimer = new Timer(true);
+            this.mTimer = new Timer();
             this.baseTimerTask = new BaseTimerTask(this);
             this.mTimer.scheduleAtFixedRate(this.baseTimerTask, 2000, 1000);
         }
@@ -156,13 +158,19 @@ public class ProcessingDelegate extends SmartbroDelegate
     public void onDestroyView() {
         // 跳转到其他的delegate前, 停止设备状态的查询
         this.pishaMachineManager.stopStatusChecking();
+        this.stopTimer();
+        super.onDestroyView();
+    }
+
+    private void stopTimer(){
         if(this.mTimer != null){
             this.mTimer.cancel();
             this.mTimer = null;
+        }
+        if(this.baseTimerTask != null){
             this.baseTimerTask.cancel();
             this.baseTimerTask = null;
         }
-        super.onDestroyView();
     }
 
     /**

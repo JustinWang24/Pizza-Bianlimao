@@ -60,8 +60,12 @@ public class Tx200Client {
         // 发送确定模式命令 : 间隔模式
         final byte[] command2 = ScannerCommand.GetSetCodeReturnModeCmd(mode);
         final byte[] resultBuffer2 = new byte[20]; // 收信的字节缓冲区
-        final int readSize2 = this.serialPortHelper.sentData(command2, resultBuffer2, 100);
-        return new CommandExecuteResult(readSize2, resultBuffer2, new ReportModeParserImpl());
+        try {
+            final int readSize2 = this.serialPortHelper.sentData(command2, resultBuffer2, 100);
+            return new CommandExecuteResult(readSize2, resultBuffer2, new ReportModeParserImpl());
+        }catch (Exception e){
+            return new CommandExecuteResult(0, resultBuffer2, new ReportModeParserImpl());
+        }
     }
 
     /**
@@ -71,8 +75,12 @@ public class Tx200Client {
     public CommandExecuteResult activateQrReader(){
         final byte[] cmd = ScannerCommand.ActivateReaderQRCmd();
         final byte[] readBuffer = new byte[40];
-        final int readSize = this.serialPortHelper.sentData(cmd, readBuffer, 200);
-        return new CommandExecuteResult(readSize, readBuffer, new ReportModeParserImpl());
+        try{
+            final int readSize = this.serialPortHelper.sentData(cmd, readBuffer, 200);
+            return new CommandExecuteResult(readSize, readBuffer, new ReportModeParserImpl());
+        }catch (Exception e){
+            return new CommandExecuteResult(0, readBuffer, new ReportModeParserImpl());
+        }
     }
 
     /**
@@ -125,10 +133,14 @@ public class Tx200Client {
      * @return CommandExecuteResult
      */
     public CommandExecuteResult disconnect(){
-        final byte[] command = ScannerCommand.GetClearCodeCmd();
-        final byte[] resultBuffer = new byte[100]; // 收信的字节缓冲区
-        final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 200);
-        return new CommandExecuteResult(readSize, resultBuffer, new ScannerControlParserImpl());
+        final byte[] resultBuffer = new byte[200]; // 收信的字节缓冲区
+        try{
+            final byte[] command = ScannerCommand.GetClearCodeCmd();
+            final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 200);
+            return new CommandExecuteResult(readSize, resultBuffer, new ScannerControlParserImpl());
+        }catch (Exception e){
+            return new CommandExecuteResult(0, resultBuffer, new ScannerControlParserImpl());
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package com.example.smartbroecommerce.main.pages;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,6 +34,8 @@ import java.util.Timer;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
+import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 
 /**
  * Created by Justin Wang from SmartBro on 10/1/18.
@@ -78,13 +81,21 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     ConvenientBanner<String> convenientBanner;
 
     private Timer timer = null;
+    private BaseTimerTask baseTimerTask = null;
     private long openTime = 0;
+
+    private String hippoAppId = null;
+    private String assetId = null;
 
     /**
      * 自提码: 用户只有在付款之后才会得到的代码，一旦认证成功就直接出饼
      */
     @OnClick(R2.id.btn_key_confirm)
     void onConfirmClick(){
+        // 先取得设备的id
+        this.hippoAppId = MachineProfile.getInstance().getHippoAppId();
+        this.assetId = MachineProfile.getInstance().getSerialName();
+
         // 判断是否为特殊的维护码
         final String codeString = this.deliveryCode.getText().toString();
         if ( "#111".equals(codeString) ){
@@ -97,46 +108,45 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
             // 暂停设备运行密码
             startWithPop(new InitDelegate());
         }else if("#666".equals(codeString)){
-//            final long productId = 1;
-//            ShoppingCart.getInstance().addProduct(productId,this);
-//            final SmartbroDelegate delegate = new ProcessingDelegate();
-//            Bundle args = new Bundle();
-//            args.putString("orderNo","fLNnTGQ-2019-01-04");
-//            args.putInt("orderId",20);
-//            args.putString("appId", "1234");
-//            args.putString("assetId", "jkddtest001");
-//            args.putBoolean("needCallBakingCmd", true);
-//            args.putInt("changes", 0);           // 找零金额
-//            delegate.setArguments(args);
-//            startWithPop(delegate);
-            startWithPop(new HippoPaymentFailedDelegate());
+            final long productId = 5;
+            ShoppingCart.getInstance().addProduct(productId,this);
+            final SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
+            Bundle args = new Bundle();
+            args.putString("appId", this.hippoAppId);
+            args.putString("assetId", this.assetId);
+            args.putString("deliveryCode", "666");
+            args.putString("msg", "测试");
+            args.putString("itemId", "jkdd001");
+            args.putDouble("productPrice", 1.0);
+            delegate.setArguments(args);
+            startWithPop(delegate);
         }else if(codeString.length() > 3){
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));
-            // 先取得设备的id
-            final String hippoAppId = MachineProfile.getInstance().getHippoAppId();
-            final String assetId = MachineProfile.getInstance().getSerialName();
-
-            // 发送提货请求到服务器
-            RestfulClient.builder()
-                    .url("hippo/check-code") // 锁定要提货的商品接口
-                    .params("hippoAppId",hippoAppId)
-                    .params("assetId",assetId)
-                    .params("tempcode",codeString)
-                    .success(new ISuccess() {
-                        @Override
-                        public void onSuccess(String response) {
-                            // 网络通信成功
-                            onCheckCodeSuccess(response, codeString);
-                        }
-                    })
-                    .failure(new IFailure() {
-                        @Override
-                        public void onFailure() {
-                            onCheckCodeFailed();
-                        }
-                    }).build().post();
+            _checkCode(codeString);
         }
+    }
+
+    private void _checkCode(final String codeString){
+        // 发送提货请求到服务器
+        RestfulClient.builder()
+                .url("hippo/check-code") // 锁定要提货的商品接口
+                .params("hippoAppId",this.hippoAppId)
+                .params("assetId",this.assetId)
+                .params("tempcode",codeString)
+                .success(new ISuccess() {
+                    @Override
+                    public void onSuccess(String response) {
+                        // 网络通信成功
+                        onCheckCodeSuccess(response, codeString);
+                    }
+                })
+                .failure(new IFailure() {
+                    @Override
+                    public void onFailure() {
+                        onCheckCodeFailed();
+                    }
+                }).build().post();
     }
 
     /**
@@ -147,11 +157,10 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private void onCheckCodeSuccess(String response, String deliveryCode){
         final JSONObject res = JSON.parseObject(response);
         final int errorNo = res.getInteger("error_no");
-        final int orderIntegerId = res.getInteger("orderIntegerId");
-        final int totalPrice = res.getInteger("totalPrice");
         final String itemId = res.getString("p");
         final String msg = res.getString("msg");
-        final String orderNo = res.getString("orderNo");
+        final double itemPrice = res.getFloat("price");
+
         if(errorNo == RestfulClient.NO_ERROR){
             /*
             这个方法实际会执行一共2个接口的调用，在验证 自提码 的准确性之后，
@@ -159,27 +168,31 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
              */
             final Product product = Product.find(itemId);
             if(product != null){
-                ShoppingCart.getInstance().addProduct(product,null);
                 // 跳转到确认支付页面
                 Bundle args = new Bundle();
+                args.putString("appId",this.hippoAppId);        // appId
+                args.putString("assetId",this.assetId);         // assetId
                 args.putString("itemId",itemId);                // 产品的 itemId
                 args.putString("deliveryCode", deliveryCode);   // 自提码
-                args.putInt("orderIntegerId",orderIntegerId);
-                args.putString("orderNo",orderNo);
-                args.putInt("totalPrice",totalPrice);
-                args.putBoolean("needCallBakingCmd", true);
-                args.putInt("changes", 0);                      // 找零金额
+                args.putString("msg", msg);   // 自提码
+
+                // 和产品相关的信息
+                args.putDouble("productPrice",itemPrice);
 
                 SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
-                delegate.setArguments(args);
-                startWithPop(delegate);
+                _redirectToDelegate(delegate, args);
             }else{
                 BetterToast.getInstance().showText(
                         getActivity(),
                         "自提码指定的产品已经售完"
                 );
+                try {
+                    Thread.sleep(1000);
+                    _startTimer();
+                }catch (Exception e){
+                    sentryCapture(e);
+                }
             }
-
         }else {
             // 清除已经输入的付款码
             this.deliveryCode.setText(msg);
@@ -188,6 +201,12 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
                     getActivity(),
                     msg
             );
+            try {
+                Thread.sleep(1000);
+                _startTimer();
+            }catch (Exception e){
+                sentryCapture(e);
+            }
         }
     }
 
@@ -197,7 +216,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private void onCheckCodeFailed(){
         BetterToast.getInstance().showText(
                 getActivity(),
-                "网络异常, 请稍后再试"
+                "互联网连接异常, 请稍后再试"
         );
     }
 
@@ -246,10 +265,17 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     @Override
     public void onResume() {
         super.onResume();
-        this.openTime = new Date().getTime();
-        final BaseTimerTask task = new BaseTimerTask(this);
-        this.timer = new Timer(true);
-        this.timer.schedule(task, 1000, 1000);
+
+        try {
+            // 1: 发送启用 QR 识别 命令
+            Tx200Client.getClientInstance()
+                    .activateQrReader();
+        }catch (Exception e){
+            Log.i("Info", e.getMessage());
+        }
+
+        // 2: 启动定时器
+        _startTimer();
     }
 
     @Override
@@ -259,12 +285,74 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
             public void run() {
                 final long now = new Date().getTime();
                 if(now - openTime > 60000){
-                    timer.cancel();
-                    timer = null;
-                    startWithPop(new ListDelegate());
+                    _stopTimer();
+                    Bundle args = new Bundle();
+                    _redirectToDelegate(new ListDelegate(), args);
+                }else {
+                    try {
+                        final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
+                        final String QrCodeString = commandExecuteResult.getResult();
+                        if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
+                            _checkCode(QrCodeString);
+
+                            // 停止计时器
+                            _stopTimer();
+
+                            // 读取到之后，进行清空操作
+                            Tx200Client.getClientInstance().clearCode();
+                            Thread.sleep(200);
+                            // 再启动扫码枪
+                            Tx200Client.getClientInstance().activateQrReader();
+                        }
+                    }catch (Exception e){
+                        sentryCapture(e);
+                    }
                 }
             }
         });
+    }
+
+    /**
+     * 跳转到指定的view
+     * @param delegate
+     * @param args
+     */
+    private void _redirectToDelegate(SmartbroDelegate delegate, Bundle args){
+        try{
+            _stopTimer();
+            Tx200Client.getClientInstance().clearCode();
+            Thread.sleep(300);
+            delegate.setArguments(args);
+            startWithPop(delegate);
+        }catch (Exception e){
+
+        }
+    }
+
+    /**
+     * 停止计时器
+     */
+    private void _stopTimer(){
+        if(this.timer != null){
+            this.timer.cancel();
+            this.timer = null;
+        }
+        if (this.baseTimerTask != null){
+            this.baseTimerTask.cancel();
+            this.baseTimerTask = null;
+        }
+    }
+
+    /**
+     * 启动计时器
+     */
+    private void _startTimer(){
+        this.openTime = new Date().getTime();
+        if(this.timer == null){
+            this.timer = new Timer(false);
+            this.baseTimerTask = new BaseTimerTask(this);
+            this.timer.schedule(this.baseTimerTask, 1000, 1000);
+        }
     }
 
     @OnClick(R2.id.btn_key0)

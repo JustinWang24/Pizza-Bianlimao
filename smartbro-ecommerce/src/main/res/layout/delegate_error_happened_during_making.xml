@@ -4,6 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/hippo_making_pizza_error_bg"
+    android:background="@mipmap/hippo_payment_failed"
     android:id="@+id/making_progress_error_layout_wrap">
 </android.support.v7.widget.LinearLayoutCompat>

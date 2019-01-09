@@ -1,4 +1,6 @@
 package com.example.smartbro.delegates;
+import android.content.Context;
+
 import com.example.smartbro.activities.ProxyActivity;
 import java.util.Date;
 
@@ -61,13 +63,21 @@ public abstract class SmartbroDelegate extends PermissionCheckerDelegate {
     }
 
     public void sentryCapture(Exception e){
-        Sentry.init(sentryDSN, new AndroidSentryClientFactory(getContext()));
-        Sentry.getContext().recordBreadcrumb(
-                new BreadcrumbBuilder().setMessage("First test").build()
-        );
-        Sentry.getContext().setUser(
-                new UserBuilder().setEmail("justinwang24@yahoo.com.au").build()
-        );
-        Sentry.capture(e);
+        try {
+            Context context = getProxyActivity();
+            if (context != null){
+                Sentry.init(sentryDSN, new AndroidSentryClientFactory(context));
+//        Sentry.init(sentryDSN, new AndroidSentryClientFactory(getContext()));
+                Sentry.getContext().recordBreadcrumb(
+                        new BreadcrumbBuilder().setMessage("First test").build()
+                );
+                Sentry.getContext().setUser(
+                        new UserBuilder().setEmail("justinwang24@yahoo.com.au").build()
+                );
+                Sentry.capture(e);
+            }
+        }catch (Exception e1){
+
+        }
     }
 }
