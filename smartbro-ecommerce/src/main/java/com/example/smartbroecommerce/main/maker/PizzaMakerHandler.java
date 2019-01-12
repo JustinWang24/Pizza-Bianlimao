@@ -140,7 +140,7 @@ public class PizzaMakerHandler extends Handler {
                     break;
                 case MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT:
                     // 饼已经取走，盒子也推到位了. 从这之后，handler处于就位烤下一张的状态
-                    // Todo: 通知服务器, 某个位置的饼已经出炉, ProcessingDelegate会不停的检查这个状态
+                    // 通知服务器, 某个位置的饼已经出炉, ProcessingDelegate会不停的检查这个状态
                     this.setProcessStatus(MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT);
                     // 检查是否已经是最后的一张饼了
                     if(this.isLastOneDone()){

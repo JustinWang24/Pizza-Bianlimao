@@ -34,6 +34,7 @@ import java.util.Timer;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 
@@ -155,6 +156,8 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
      * @param deliveryCode 服务器返回的字符串形式的处理结果
      */
     private void onCheckCodeSuccess(String response, String deliveryCode){
+        Log.i("Info","检查自提码的网络调用: " + response);
+
         final JSONObject res = JSON.parseObject(response);
         final int errorNo = res.getInteger("error_no");
         final String itemId = res.getString("p");
@@ -294,10 +297,8 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
                         final String QrCodeString = commandExecuteResult.getResult();
                         if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
                             _checkCode(QrCodeString);
-
                             // 停止计时器
                             _stopTimer();
-
                             // 读取到之后，进行清空操作
                             Tx200Client.getClientInstance().clearCode();
                             Thread.sleep(200);
@@ -318,14 +319,14 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
      * @param args
      */
     private void _redirectToDelegate(SmartbroDelegate delegate, Bundle args){
+        _stopTimer();
         try{
-            _stopTimer();
             Tx200Client.getClientInstance().clearCode();
             Thread.sleep(300);
             delegate.setArguments(args);
             startWithPop(delegate);
         }catch (Exception e){
-
+            LogUtil.LogException(e);
         }
     }
 

@@ -623,7 +623,6 @@ public class PishaMachineManager {
                     final Message message1 = new Message();
                     message1.what = MachineStatusOfMakingPizza.INFORM_TO_TAKE_PIZZA_READY;  // 通知客人可以取饼了
                     message1.arg1 = resetDoneStatus;    // 携带是否 setDone 成功的消息: 成功或者放弃
-
                     handler.sendMessage(message1);
                 }
                 return MachineStatusOfMakingPizza.MACHINE_STATUS_DECODE_OK;
@@ -699,7 +698,6 @@ public class PishaMachineManager {
                 // Todo 这个时候, 应该停止继续读取状态了，如果是只要烤一张饼
                 this.cookingProcess.reset();
                 if(this.isLastOne){
-//                    LogUtil.LogInfo("已经是最后一张了, 中断PLC状态读取进程");
                     return MachineStatusOfMakingPizza.MACHINE_STATUS_DECODE_SHOULD_INTERRUPT;
                 }else {
                     // 假定已经复位成功了

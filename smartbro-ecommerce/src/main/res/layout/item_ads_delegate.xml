@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ads_banner_wrap"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="1dp"
+    android:layout_height="608dp"
+    android:layout_marginTop="0dp"
     android:gravity="top"
     >
     <com.bigkoo.convenientbanner.ConvenientBanner
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="525dp"
+        android:layout_height="match_parent"
         android:id="@+id/ads_banner">
     </com.bigkoo.convenientbanner.ConvenientBanner>
 </android.support.v7.widget.LinearLayoutCompat>

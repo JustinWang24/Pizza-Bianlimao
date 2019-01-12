@@ -61,6 +61,11 @@ public class ProcessingDelegate extends SmartbroDelegate
     private boolean pizzaMachineResetDone = false;
     private boolean needCallBakingCmd = true;
 
+    // 在披萨饼烤好了之后的最长等待时间
+    private static final int MAX_WAITING_TIME_AFTER_PIZZA_DONE = 40;
+    // 披萨饼烤好之后的时间计数器
+    private int counterPizzaDone = 0;
+
     // 播放声音的相关属性
     private boolean isPlayingAudio = false;
     private MediaPlayer mediaPlayer = null;
@@ -143,7 +148,7 @@ public class ProcessingDelegate extends SmartbroDelegate
     public void onResume() {
         super.onResume();
         // 初始化handler
-
+        this.counterPizzaDone = 0;
         this.makePizza(0);
 
         /* 开始监听 */
@@ -162,6 +167,9 @@ public class ProcessingDelegate extends SmartbroDelegate
         super.onDestroyView();
     }
 
+    /**
+     * 停止计时器
+     */
     private void stopTimer(){
         if(this.mTimer != null){
             this.mTimer.cancel();
@@ -256,31 +264,18 @@ public class ProcessingDelegate extends SmartbroDelegate
                         break;
                     case MachineStatusOfMakingPizza.ERROR_COMMUNICATION:
                         // PLC 链接中断了
-                        if(mTimer != null){
-                            mTimer.cancel();
-                            mTimer = null;
-                        }
-                        if(baseTimerTask != null){
-                            baseTimerTask.cancel();
-                            baseTimerTask = null;
-                        }
+                        stopTimer();
                         startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.INFORM_ERROR_HAPPENED_IN_PROGRESS:
-                        // Todo 检查到设备故障，但是现在并不需要处理
+                        // 检查到设备故障，但是现在并不需要处理
+                        stopTimer();
                         startWithPop(new ErrorHappendDuringMakingDelegate());
                         break;
                     case MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT:
                         if(pizzaMakerHandler.isLastOneDone()){
                             _showWaitingForPlateAnimation();    // 显示等待装盘的动画
-                            if(mTimer != null){
-                                mTimer.cancel();
-                                mTimer = null;
-                            }
-                            if(baseTimerTask != null){
-                                baseTimerTask.cancel();
-                                baseTimerTask = null;
-                            }
+                            stopTimer();
                             // 这个时候，还没有把盒子推出来，因此需要检查
                             waitThenRedirect();
                         }
@@ -289,6 +284,7 @@ public class ProcessingDelegate extends SmartbroDelegate
                         /*
                          * 发现没有盒子
                          */
+                        stopTimer();
                         waitThenRedirect();
                         break;
                     case MachineStatusOfMakingPizza.PLC_RESET_OK_FINAL:
@@ -317,10 +313,9 @@ public class ProcessingDelegate extends SmartbroDelegate
      * 显示可以取饼的动画
      */
     private void _showTakePizzaAnimation(){
-        this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.please_take_pizza);
-
         // MachineStatusOfMakingPizza.INFORM_TO_TAKE_PIZZA_READY 消息已经收到
         if(!pizzaDoneAudioHasBeenPlayed){
+            this.makingPizzaAnimationImage.setBackgroundResource(R.mipmap.please_take_pizza);
             // 可以取饼了，则通知服务器 这个操作只做一次就行
             RestfulClient.builder()
                     .url("hippo/sync-delivery-info")
@@ -347,6 +342,12 @@ public class ProcessingDelegate extends SmartbroDelegate
                         }
                     })
                     .build().post();
+        }
+        this.counterPizzaDone++;
+        if (this.counterPizzaDone > MAX_WAITING_TIME_AFTER_PIZZA_DONE){
+            // 已经超出了最长的等待时间
+            this.stopTimer();
+            this.waitThenRedirect();
         }
     }
 
@@ -377,6 +378,20 @@ public class ProcessingDelegate extends SmartbroDelegate
     private void playAudio(int what){
         if(this.mediaPlayer == null){
             this.mediaPlayer = MediaPlayer.create(getActivity(),what);
+            this.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    // 监听播放音频, 如果播放结束
+                    if(nextAudioRaw != -1){
+                        mediaPlayer = MediaPlayer.create(getActivity(),nextAudioRaw);
+                        mediaPlayer.start();
+                        // 表示没有继续要播放的音频了
+                        nextAudioRaw = -1;
+                    }else {
+                        isPlayingAudio = false;
+                    }
+                }
+            });
         }
 
         // 如果没有播放声音文件, 并且收到烤饼已经完成的消息
@@ -384,25 +399,6 @@ public class ProcessingDelegate extends SmartbroDelegate
             this.isPlayingAudio = true;
             this.mediaPlayer = MediaPlayer.create(getActivity(),what); // 播放叮当的声音
             this.mediaPlayer.start();
-//
-//            if(what==R.raw.pizzadone ){
-//                this.nextAudioRaw = R.raw.pizzadone;
-//            }
         }
-
-        this.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                // 监听播放音频, 如果播放结束
-                if(nextAudioRaw != -1){
-                    mediaPlayer = MediaPlayer.create(getActivity(),nextAudioRaw);
-                    mediaPlayer.start();
-                    // 表示没有继续要播放的音频了
-                    nextAudioRaw = -1;
-                }else {
-                    isPlayingAudio = false;
-                }
-            }
-        });
     }
 }
