@@ -34,6 +34,7 @@ import java.util.Timer;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.taihua.pishamachine.DoorManager;
 import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
@@ -99,35 +100,54 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
         // 判断是否为特殊的维护码
         final String codeString = this.deliveryCode.getText().toString();
-        if ( "#111".equals(codeString) ){
-            // 上货密码
-            startWithPop(new StockManagerDelegate());
-        }else if("#222".equals(codeString)){
-            // 暂停设备运行密码
-            startWithPop(new StopWorkingDelegate());
-        }else if("#333".equals(codeString)){
-            // 暂停设备运行密码
-            startWithPop(new InitDelegate());
-        }else if("#666".equals(codeString)){
-            final long productId = 5;
-            ShoppingCart.getInstance().addProduct(productId,this);
-            final SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
-            Bundle args = new Bundle();
-            args.putString("appId", this.hippoAppId);
-            args.putString("assetId", this.assetId);
-            args.putString("deliveryCode", "666");
-            args.putString("msg", "测试");
-            args.putString("itemId", "jkdd001");
-            args.putDouble("productPrice", 1.0);
-            delegate.setArguments(args);
-            startWithPop(delegate);
-        }else if(codeString.length() > 3){
+        if ( "#859280".equals(codeString) ){
+            // 暂停设备运行密码 #859280
+            this._redirectToDelegate(new StopWorkingDelegate(),new Bundle());
+        }else if("#351486".equals(codeString)){
+            // 上货密码 #351486
+            this.unlockTheDoor();
+        }
+//        else if("#666".equals(codeString)){
+//            final long productId = 5;
+//            ShoppingCart.getInstance().addProduct(productId,this);
+//            final SmartbroDelegate delegate = new DeliveryCodeSuccessDelegate();
+//            Bundle args = new Bundle();
+//            args.putString("appId", this.hippoAppId);
+//            args.putString("assetId", this.assetId);
+//            args.putString("deliveryCode", "666");
+//            args.putString("msg", "测试");
+//            args.putString("itemId", "jkdd001");
+//            args.putDouble("productPrice", 1.0);
+//            delegate.setArguments(args);
+//            startWithPop(delegate);
+//        }
+        else if(codeString.length() > 3){
             // 输入自提码
             this.deliveryCode.setText(getString(R.string.text_network_communication));
             _checkCode(codeString);
         }
     }
 
+    /**
+     * 开门上货的功能
+     */
+    private void unlockTheDoor(){
+        _stopTimer();
+        try {
+            Thread.sleep(300);
+            final DoorManager doorManager = DoorManager.getInstance();
+            doorManager.unlockDoor();
+            Thread.sleep(300);
+            startWithPop(new StockManagerDelegate());
+        }catch (Exception e){
+            this.sentryCapture(e);
+        }
+    }
+
+    /**
+     * 检查提货码
+     * @param codeString
+     */
     private void _checkCode(final String codeString){
         // 发送提货请求到服务器
         RestfulClient.builder()
@@ -156,8 +176,6 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
      * @param deliveryCode 服务器返回的字符串形式的处理结果
      */
     private void onCheckCodeSuccess(String response, String deliveryCode){
-        Log.i("Info","检查自提码的网络调用: " + response);
-
         final JSONObject res = JSON.parseObject(response);
         final int errorNo = res.getInteger("error_no");
         final String itemId = res.getString("p");

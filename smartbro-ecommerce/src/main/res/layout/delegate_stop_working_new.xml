@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@mipmap/hippo_making_pizza_bg"
     android:id="@+id/making_progress_layout_wrap">
+    <include layout="@layout/item_ads_delegate" />
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="640dp"

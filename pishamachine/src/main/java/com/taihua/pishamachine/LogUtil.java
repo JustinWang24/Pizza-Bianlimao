@@ -19,20 +19,22 @@ public class
 LogUtil {
 
     private static final String FILE_NAME = "/PisaMessage.txt";
-    private static Boolean MYLOG_SWITCH = true; // 日志文件总开关
+    private static Boolean MYLOG_SWITCH = false; // 日志文件总开关
 
     public static void i(String tag, String str) {
         Log.i(tag, str.toString());
     }
 
+    /**
+     * 对于异常，总是打印
+     * @param e
+     */
     public static void LogException(Exception e) {
-        if (MYLOG_SWITCH) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            String str = sw.toString();
-            writeException(str);
-        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String str = sw.toString();
+        writeException(str);
     }
 
     /**
@@ -102,7 +104,7 @@ LogUtil {
                 raf.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogInfoForce(e.getMessage());
         }
     }
 

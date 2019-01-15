@@ -1,11 +1,7 @@
 package com.taihua.pishamachine;
 
-import android.util.Log;
-
 import com.taihua.pishamachine.command.CommandSender;
 import com.taihua.pishamachine.command.PlcDevice;
-
-import java.util.Arrays;
 
 /**
  * Created by Justin Wang from SmartBro on 10/1/18.
@@ -64,7 +60,7 @@ public class DoorManager {
                 // 两秒后关闭串口
                 this._terminateSerialPort();
             } catch (InterruptedException e) {
-                LogUtil.LogInfo("第二条关门命令异常");
+                LogUtil.LogException(e);
             }
         }
     }
@@ -85,14 +81,14 @@ public class DoorManager {
 
             if(readSize > 0){
 //                LogUtil.LogInfo("检测是否有盒子的方法读取返回值: " + Arrays.toString(outBuffer));
-                Log.d("packpingBoxInPosition1",Arrays.toString(outBuffer));
+//                Log.d("packpingBoxInPosition1",Arrays.toString(outBuffer));
                 // 第 9 个byte如果是 0x00, 表示盒子正常. 因为返回值高位字节和地位自己是反着的
 //                result = outBuffer[8] == 0x00;
 
                 // 检查是否有 01 01 02 01 00 CRC
                 result = this._match(outBuffer);
 
-                Log.d("有盒子1",Boolean.toString(result));
+//                Log.d("有盒子1",Boolean.toString(result));
             }
 
             if(!result){
@@ -102,8 +98,8 @@ public class DoorManager {
 
                 if(readSize2 > 0){
 //                LogUtil.LogInfo("检测是否有盒子的方法读取返回值: " + Arrays.toString(outBuffer));
-                    Log.d("packpingBoxInPosition2",Arrays.toString(outBuffer));
-                    Log.d("有盒子2",Boolean.toString(result));
+//                    Log.d("packpingBoxInPosition2",Arrays.toString(outBuffer));
+//                    Log.d("有盒子2",Boolean.toString(result));
                     result = this._match(outBuffer);
                 }
 
@@ -114,8 +110,8 @@ public class DoorManager {
 
                     if(readSize3 > 0){
 //                LogUtil.LogInfo("检测是否有盒子的方法读取返回值: " + Arrays.toString(outBuffer));
-                        Log.d("packpingBoxInPosition3",Arrays.toString(outBuffer));
-                        Log.d("有盒子3",Boolean.toString(result));
+//                        Log.d("packpingBoxInPosition3",Arrays.toString(outBuffer));
+//                        Log.d("有盒子3",Boolean.toString(result));
                         result = this._match(outBuffer);
                     }
                 }
@@ -123,7 +119,7 @@ public class DoorManager {
 
             this._terminateSerialPort();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LogUtil.LogException(e);
         }
 
         return result;

@@ -6,6 +6,7 @@
     android:background="@mipmap/hippo_app_checkout_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical">
+    <include layout="@layout/item_ads_delegate" />
     <LinearLayout
         android:id="@+id/toolbar_cancel_checkout"
         android:layout_marginTop="614dp"

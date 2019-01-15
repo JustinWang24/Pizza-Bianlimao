@@ -7,10 +7,13 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IFailure;
 import com.example.smartbro.net.callback.ISuccess;
+import com.example.smartbro.ui.banner.BannerCreator;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
@@ -20,6 +23,7 @@ import com.example.smartbroecommerce.database.Product;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
+import com.example.smartbroecommerce.utils.BannerTool;
 import com.example.smartbroecommerce.utils.BetterToast;
 import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
@@ -78,6 +82,9 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     @BindView(R2.id.tv_time_seconds_text)
     AppCompatTextView timeSecondsText;
 
+    @BindView(R2.id.ads_banner)
+    ConvenientBanner<String> convenientBanner;
+
     @OnClick(R2.id.tv_toolbar_cancel_checkout_text)
     void onCancelCheckoutClicked(){
         this.backToProductList();
@@ -91,6 +98,17 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
         this._resetLocalVariables();
+
+        BannerCreator.setDefault(
+                this.convenientBanner,
+                BannerTool.GetInstance().getBannerImages(),
+                new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+
+                    }
+                }
+        );
 
         Bundle args = getArguments();
         this.productId = args.getLong("productId");
@@ -251,6 +269,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                     getProxyActivity(),
                     e.getMessage()
             );
+            LogUtil.LogException(e);
         }
     }
 

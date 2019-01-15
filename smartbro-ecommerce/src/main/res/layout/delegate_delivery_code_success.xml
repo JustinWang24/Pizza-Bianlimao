@@ -7,7 +7,7 @@
     android:background="@mipmap/hippo_delivery_code_success"
     android:gravity="center_horizontal"
     android:orientation="vertical">
-
+    <include layout="@layout/item_ads_delegate" />
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_cancel_delivery"
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/image_product_multiple_round_corner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:paddingStart="7dp"
@@ -58,7 +58,7 @@
             android:scaleType="center"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/dp_40"
+            android:layout_marginEnd="@dimen/dp_10"
             app:riv_corner_radius_top_left="20dip"
             app:riv_corner_radius_top_right="20dip"
             app:riv_border_width="3dip"

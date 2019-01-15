@@ -11,11 +11,14 @@ import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.example.smartbro.app.AccountManager;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IFailure;
 import com.example.smartbro.net.callback.ISuccess;
+import com.example.smartbro.ui.banner.BannerCreator;
 import com.example.smartbro.utils.timer.BaseTimerTask;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
@@ -24,6 +27,7 @@ import com.example.smartbroecommerce.container.ContainerConfig;
 import com.example.smartbroecommerce.database.Position;
 import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.product.ListDelegate;
+import com.example.smartbroecommerce.utils.BannerTool;
 import com.example.smartbroecommerce.utils.UrlTool;
 import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MachineStatusOfMakingPizza;
@@ -79,6 +83,9 @@ public class ProcessingDelegate extends SmartbroDelegate
     @BindView(R2.id.making_pizza_animation_image)
     ImageView makingPizzaAnimationImage = null;
 
+    @BindView(R2.id.ads_banner)
+    ConvenientBanner<String> convenientBanner;
+
     @Override
     public Object setLayout() {
         return R.layout.delegate_maker_progress_new;
@@ -86,6 +93,18 @@ public class ProcessingDelegate extends SmartbroDelegate
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
+
+        BannerCreator.setDefault(
+                this.convenientBanner,
+                BannerTool.GetInstance().getBannerImages(),
+                new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+
+                    }
+                }
+        );
+
         Bundle args = getArguments();
         this.orderId = args.getInt("orderIntegerId");
         this.orderNo = args.getString("orderNo");
