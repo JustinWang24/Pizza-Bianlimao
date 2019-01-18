@@ -8,13 +8,11 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartbro.app.AccountManager;
-import com.example.smartbro.app.Smartbro;
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IFailure;
@@ -29,18 +27,12 @@ import com.example.smartbroecommerce.Auth.MachineInitHandler;
 import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.container.ContainerConfig;
-import com.example.smartbroecommerce.database.Product;
-import com.example.smartbroecommerce.database.ShoppingCart;
 import com.example.smartbroecommerce.main.maker.PizzaMakerHandler;
-import com.example.smartbroecommerce.main.maker.ProcessingDelegate;
 import com.taihua.pishamachine.CashierManager;
 import com.taihua.pishamachine.CashierMessage;
 import com.taihua.pishamachine.MicroLightScanner.CommandExecuteResult;
-import com.taihua.pishamachine.MicroLightScanner.ParserImpl.QrCodeParserImpl;
-import com.taihua.pishamachine.MicroLightScanner.ScannerCommand;
 import com.taihua.pishamachine.MicroLightScanner.Tx200Client;
 import com.taihua.pishamachine.PishaMachineManager;
-import com.taihua.pishamachine.command.CommandHelper;
 
 import java.util.Date;
 import java.util.Timer;
@@ -346,7 +338,6 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 
         if(this.validate()){
 //            getProxyActivity().deleteDatabase("pizza_box.db");
-            Log.i("Info", this.machineSerialNumber.getText().toString());
             // 如果输入的设备串号符合要求, 那么就提交给服务器进行验证
             RestfulClient.builder()
                 .url("machines/init")

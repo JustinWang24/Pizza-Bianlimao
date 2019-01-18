@@ -1,7 +1,5 @@
 package com.example.smartbroecommerce.database;
 
-import android.util.Log;
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
@@ -123,10 +121,6 @@ public class Product {
 
     @Override
     public String toString() {
-        Log.i("Product", "***************** 对象信息输出开始 ********************");
-        Log.i("产品名称", this.getName());
-        Log.i("产品ID", Long.toString(this.getId()));
-        Log.i("Product", "***************** 对象信息输出结束 ********************");
         return super.toString();
     }
 

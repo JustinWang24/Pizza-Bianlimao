@@ -1,8 +1,5 @@
 package com.example.smartbroecommerce.database;
 
-import android.text.format.DateUtils;
-import android.util.Log;
-
 import com.alibaba.fastjson.annotation.JSONField;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -132,7 +129,6 @@ public class Position {
         calendar.add(Calendar.HOUR_OF_DAY, 48);
         this.setExpiredAt(calendar.getTime());
 
-        Log.i("Info",calendar.getTime().toString());
         PositionDao dao = DatabaseManager.getInstance().getPositionDao();
         dao.update(this);
     }

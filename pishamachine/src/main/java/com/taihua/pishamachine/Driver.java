@@ -2,7 +2,6 @@ package com.taihua.pishamachine;
 
 import java.io.File;
 import java.util.ArrayList;
-import android.util.Log;
 
 /**
  * Created by Justin Wang from SmartBro on 19/12/17.
@@ -25,11 +24,9 @@ public class Driver {
         File dev = new File("/dev");
 
         if (!dev.exists()) {
-            Log.i(TAG, "getDevices: " + dev.getAbsolutePath() + " 不存在");
             return devices;
         }
         if (!dev.canRead()) {
-            Log.i(TAG, "getDevices: " + dev.getAbsolutePath() + " 没有读取权限");
             return devices;
         }
 
@@ -38,7 +35,6 @@ public class Driver {
         int i;
         for (i = 0; i < files.length; i++) {
             if (files[i].getAbsolutePath().startsWith(mDeviceRoot)) {
-                Log.d(TAG, "Found new device: " + files[i]);
                 devices.add(files[i]);
             }
         }

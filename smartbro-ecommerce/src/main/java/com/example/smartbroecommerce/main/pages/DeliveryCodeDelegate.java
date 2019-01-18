@@ -2,7 +2,6 @@ package com.example.smartbroecommerce.main.pages;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,9 +20,6 @@ import com.example.smartbroecommerce.R;
 import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.database.Product;
-import com.example.smartbroecommerce.database.ShoppingCart;
-import com.example.smartbroecommerce.machine.InitDelegate;
-import com.example.smartbroecommerce.main.checkout.HippoPaymentFailedDelegate;
 import com.example.smartbroecommerce.main.product.ListDelegate;
 import com.example.smartbroecommerce.main.stock.StockManagerDelegate;
 import com.example.smartbroecommerce.utils.BannerTool;
@@ -89,6 +85,8 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
     private String hippoAppId = null;
     private String assetId = null;
 
+    private String userRealInput = "";
+
     /**
      * 自提码: 用户只有在付款之后才会得到的代码，一旦认证成功就直接出饼
      */
@@ -98,8 +96,14 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
         this.hippoAppId = MachineProfile.getInstance().getHippoAppId();
         this.assetId = MachineProfile.getInstance().getSerialName();
 
+
+        String codeString = this.deliveryCode.getText().toString();
+        if (this.isFirstLetterHash(codeString)){
+            // 如果第一个字母是# 那么从 userRealInput 获取真正的输入
+            codeString = "#" + this.userRealInput;
+        }
+
         // 判断是否为特殊的维护码
-        final String codeString = this.deliveryCode.getText().toString();
         if ( "#859280".equals(codeString) ){
             // 暂停设备运行密码 #859280
             this._redirectToDelegate(new StopWorkingDelegate(),new Bundle());
@@ -149,25 +153,73 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
      * @param codeString
      */
     private void _checkCode(final String codeString){
-        // 发送提货请求到服务器
-        RestfulClient.builder()
-                .url("hippo/check-code") // 锁定要提货的商品接口
-                .params("hippoAppId",this.hippoAppId)
-                .params("assetId",this.assetId)
-                .params("tempcode",codeString)
-                .success(new ISuccess() {
-                    @Override
-                    public void onSuccess(String response) {
-                        // 网络通信成功
-                        onCheckCodeSuccess(response, codeString);
-                    }
-                })
-                .failure(new IFailure() {
-                    @Override
-                    public void onFailure() {
-                        onCheckCodeFailed();
-                    }
-                }).build().post();
+        if (this.isFirstLetterHash(codeString)){
+            // 是特殊代码
+            RestfulClient.builder()
+                    .url("hippo/check-code") // 锁定要提货的商品接口
+                    .params("hippoAppId",this.hippoAppId)
+                    .params("assetId",this.assetId)
+                    .params("tempcode",codeString)
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+                            // 网络通信成功
+                            onCheckSpecialCodeSuccess(response);
+                        }
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+                            onCheckSpecialCodeFailed();
+                        }
+                    }).build().post();
+        }else {
+            // 发送提货请求到服务器
+            RestfulClient.builder()
+                    .url("hippo/check-code") // 锁定要提货的商品接口
+                    .params("hippoAppId",this.hippoAppId)
+                    .params("assetId",this.assetId)
+                    .params("tempcode",codeString)
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+                            // 网络通信成功
+                            onCheckCodeSuccess(response, codeString);
+                        }
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+                            onCheckCodeFailed();
+                        }
+                    }).build().post();
+        }
+    }
+
+    /**
+     * 当特殊码验证请求执行成功
+     * @param response
+     */
+    private void onCheckSpecialCodeSuccess(String response){
+        final JSONObject res = JSON.parseObject(response);
+        final int errorNo = res.getInteger("error_no");
+        this.userRealInput = "";
+        this.deliveryCode.setText("");
+        if(errorNo == RestfulClient.NO_ERROR){
+            // 跳转到加饼的界面，同时打开柜门
+            this.unlockTheDoor();
+        }else {
+            BetterToast.getInstance().showText(getProxyActivity(),"您输入的提货码无效");
+        }
+    }
+
+    /**
+     * 当特殊码验证请求执行失败
+     */
+    private void onCheckSpecialCodeFailed(){
+        this.userRealInput = "";
+        this.deliveryCode.setText("");
+        BetterToast.getInstance().showText(getProxyActivity(),"您输入的提货码无效");
     }
 
     /**
@@ -261,7 +313,21 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
 
     private void handleClick(Button button){
         final String code = this.deliveryCode.getText().toString();
-        this.deliveryCode.setText(code + button.getText().toString());
+        if(this.isFirstLetterHash(code)){
+            this.userRealInput += button.getText().toString();
+            this.deliveryCode.setText(code + "#");
+        }else{
+            this.deliveryCode.setText(code + button.getText().toString());
+        }
+    }
+
+    private boolean isFirstLetterHash(String input){
+        if(input.length() > 0){
+            char first = input.charAt(0);
+            return first == '#';
+        }else{
+            return false;
+        }
     }
 
     @Override
@@ -292,7 +358,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
             Tx200Client.getClientInstance()
                     .activateQrReader();
         }catch (Exception e){
-            Log.i("Info", e.getMessage());
+            sentryCapture(e);
         }
 
         // 2: 启动定时器
@@ -314,7 +380,7 @@ public class DeliveryCodeDelegate extends SmartbroDelegate implements ITimerList
                         final CommandExecuteResult commandExecuteResult = Tx200Client.getClientInstance().scan();
                         final String QrCodeString = commandExecuteResult.getResult();
                         if(!CommandExecuteResult.KEEP_WAITING.equals(QrCodeString)){
-                            _checkCode(QrCodeString);
+                            _checkCode(QrCodeString);    // 扫码时肯定不是特殊代码
                             // 停止计时器
                             _stopTimer();
                             // 读取到之后，进行清空操作

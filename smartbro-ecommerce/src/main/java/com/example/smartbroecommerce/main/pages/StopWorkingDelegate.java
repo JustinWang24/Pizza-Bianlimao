@@ -2,21 +2,16 @@ package com.example.smartbroecommerce.main.pages;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
 import com.example.smartbro.delegates.SmartbroDelegate;
 import com.example.smartbro.utils.timer.ITimerListener;
 import com.example.smartbroecommerce.R;
-import com.example.smartbroecommerce.R2;
 import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.utils.UrlTool;
 
 import java.util.Date;
 import java.util.Timer;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * Created by Justin Wang from SmartBro on 12/1/18.

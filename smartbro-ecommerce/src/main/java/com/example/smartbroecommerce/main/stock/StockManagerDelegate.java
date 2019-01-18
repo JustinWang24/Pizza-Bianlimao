@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
@@ -150,7 +149,7 @@ public class StockManagerDelegate extends SmartbroDelegate {
                     .failure(new IFailure() {
                         @Override
                         public void onFailure() {
-                            Log.i("here","failure");
+                            BetterToast.getInstance().showText(getProxyActivity(),"网络通信失败");
                         }
                     })
                     .build().post();

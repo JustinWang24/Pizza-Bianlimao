@@ -3,7 +3,6 @@ package com.example.smartbroecommerce.machine;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
@@ -116,14 +115,14 @@ public class HomeDelegate extends SmartbroDelegate implements OnItemClickListene
                         @Override
                         public void onError(int code, String msg) {
                             // 加载数据发生错误的时候
-                            Log.i("HomeDelegate 初始化轮播图", msg);
+//                            Log.i("HomeDelegate 初始化轮播图", msg);
                         }
                     })
                     .failure(new IFailure() {
                         @Override
                         public void onFailure() {
                             // 失败的时候
-                            Log.i("HomeDelegate 初始化轮播图", "彻底失败");
+//                            Log.i("HomeDelegate 初始化轮播图", "彻底失败");
                         }
                     })
                     .build()

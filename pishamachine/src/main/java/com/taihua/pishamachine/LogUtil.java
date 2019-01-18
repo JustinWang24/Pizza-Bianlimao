@@ -9,7 +9,6 @@ import java.io.RandomAccessFile;
 import java.io.StringWriter;
 
 import android.os.Environment;
-import android.util.Log;
 
 /**
  * 日志打印
@@ -22,7 +21,6 @@ LogUtil {
     private static Boolean MYLOG_SWITCH = false; // 日志文件总开关
 
     public static void i(String tag, String str) {
-        Log.i(tag, str.toString());
     }
 
     /**
