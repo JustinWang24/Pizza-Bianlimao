@@ -240,7 +240,7 @@ public class ListDelegate extends SmartbroDelegate
         Bundle args = getArguments();
         final int errorValue = args.getInt("errorCode");
 
-        if(errorValue == 0){
+        if(errorValue <= 0){
             // 表示没有读取到任何错误 PLC
             this.reloadProducts();  // 重新加载产品，确保没有库存的产品下架
             // 初始化上一次点击的时间戳
@@ -250,11 +250,9 @@ public class ListDelegate extends SmartbroDelegate
             this.mTimer = new Timer(true);
             this.mTimer.scheduleAtFixedRate(this.baseTimerTask,1000, 5000);
         }else {
-            if(errorValue > 0){
-                // 表示发生了错误, 需要上报服务器, 同时然后跳转到等待页面
-                this.stopAllTimer();
-                startWithPop(new StopWorkingDelegate());
-            }
+            // 表示发生了错误, 需要上报服务器, 同时然后跳转到等待页面
+            this.stopAllTimer();
+            startWithPop(new StopWorkingDelegate());
         }
     }
 

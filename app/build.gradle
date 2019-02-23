@@ -27,6 +27,10 @@ android {
     }
     productFlavors {
     }
+
+    dexOptions {
+        jumboMode true
+    }
 }
 
 
@@ -36,7 +40,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support.constraint:constraint-layout:1.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.3'
     testCompile 'junit:junit:4.12'
     compile 'com.jiechic.library:xUtils:2.6.14'
     compile 'com.github.ybq:Android-SpinKit:1.1.0'
@@ -50,7 +54,7 @@ dependencies {
     // 添加的依赖关系，这里手工改成 annotationProcessor
     annotationProcessor project(':Smartbro-Compiler')
     // Facebook的数据库查看工具， 仅仅开发期间使用
-//    compile 'com.facebook.stetho:stetho:1.5.0'
-//    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    compile 'com.facebook.stetho:stetho:1.5.0'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 //    compileOnly 'com.google.android.things:androidthings:+'
 }

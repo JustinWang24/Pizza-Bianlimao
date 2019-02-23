@@ -112,7 +112,7 @@ public class Tx200Client {
         final byte[] command = ScannerCommand.GetReadQrCodeCommand();
         final byte[] resultBuffer = new byte[200]; // 收信的字节缓冲区
         try{
-            final  int readSize = this.serialPortHelper.sentData(command, resultBuffer, 300);
+            final int readSize = this.serialPortHelper.sentData(command, resultBuffer, 200);
             return new CommandExecuteResult(readSize, resultBuffer, new QrCodeParserImpl());
         }catch (Exception e){
             LogUtil.LogException(e);

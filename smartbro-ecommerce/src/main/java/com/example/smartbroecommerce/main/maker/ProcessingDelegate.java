@@ -385,6 +385,12 @@ public class ProcessingDelegate extends SmartbroDelegate
         Bundle args = new Bundle();
         args.putInt("errorCode",errorCode);   // 订单ID
 
+        if(this.orderId > 0){
+            UrlTool.reportOrderComplete(this.orderId);
+        }else{
+            UrlTool.reportOrderComplete(this.orderNo);
+        }
+
         ListDelegate delegate = new ListDelegate();
         delegate.setArguments(args);
         redirectToDelegate(delegate);

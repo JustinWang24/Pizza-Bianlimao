@@ -43,7 +43,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1500dp"
+        android:layout_marginTop="1560dp"
         android:gravity="center_horizontal">
         <Button
             android:id="@+id/tv_back_to_products_list_in_payment_failed"

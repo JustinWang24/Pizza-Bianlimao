@@ -4,7 +4,7 @@
     android:id="@+id/hippo_app_checkout_view_wrap"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/hippo_delivery_code_success"
+    android:background="@mipmap/hippo_delivery_code_bg_new"
     android:gravity="center_horizontal"
     android:orientation="vertical">
     <include layout="@layout/item_ads_delegate" />

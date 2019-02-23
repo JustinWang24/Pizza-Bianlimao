@@ -517,12 +517,12 @@ public class InitDelegate extends SmartbroDelegate implements FormValidator, ITi
 //            echo("串口连接失败, " + e.getMessage(), true);
 //        }
 
-        try {
-            final CommandExecuteResult result = Tx200Client.getClientInstance().clearCode();
-            echo("清空码值 扫描枪已经禁止使用 " + result.getRealResult(), false);
-        }catch (Exception e){
-            echo("执行 启动命令 错误: " + e.getMessage(), false);
-        }
+//        try {
+//            final CommandExecuteResult result = Tx200Client.getClientInstance().clearCode();
+//            echo("清空码值 扫描枪已经禁止使用 " + result.getRealResult(), false);
+//        }catch (Exception e){
+//            sentryCapture(e);
+//        }
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.example.smartbroecommerce.main.checkout;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
@@ -114,7 +113,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         this.productId = args.getLong("productId");
         this.product = Product.find(this.productId);
         this.scanCounter = 0;
-        if(this.product != null){
+        if(this.product != null)
+        {
             ShoppingCart.getInstance().addProduct(this.product,this);
             this.productNameText.setText(getString(R.string.text_product_you_select) + this.product.getName());
 
@@ -125,7 +125,7 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             final int priceInCents = (int) this.product.getPrice() * 100;
 
             // 开始扫描
-            this.startScanning();
+//            this.startScanning();
 
             // 通知服务器，以便创建一个新的订单
             RestfulClient.builder()
@@ -219,13 +219,29 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
         this.isOrderHasBeenPaid = false;
         this.isPayOrderApiCalled = false;
         this.scanCounter = 0;
+        this.isExceptionReported = false;
     }
 
     /**
      * 返回产品列表页面
      */
     protected void backToProductList(){
-        startWithPop(new ListDelegate());
+        if(this.scanCustomerPaymentCodeTimer != null){
+            this.scanCustomerPaymentCodeTimer.cancel();
+            this.scanCustomerPaymentCodeTimer = null;
+        }
+
+        if (this.timerTask != null){
+            this.timerTask.cancel();
+            this.timerTask = null;
+        }
+
+        ShoppingCart.getInstance().clear();
+        Bundle args = new Bundle();
+        args.putInt("errorCode",0);
+        ListDelegate delegate = new ListDelegate();
+        delegate.setArguments(args);
+        startWithPop(delegate);
     }
 
     /**
@@ -296,7 +312,8 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             BetterToast.getInstance().showText(getProxyActivity(),"扫码器连接失败");
             if(!this.isExceptionReported){
                 this.isExceptionReported = true;
-                sentryCapture(e);
+//                sentryCapture(e);
+                LogUtil.LogException(e);
             }
         }
     }
@@ -307,16 +324,19 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             @Override
             public void run() {
                 if(scanCounter <= maxWaitSeconds){
+                    /**
+                     * 在屏幕上显示倒计时
+                     */
                     final String secondsText;
                     if(scanCounter > 50){
                         secondsText = "0" + Integer.toString( 60 - scanCounter);
                     }else{
                         secondsText = Integer.toString(60 - scanCounter);
                     }
-
                     scanCounter++;
-
                     timeSecondsText.setText(secondsText);
+                    // 显示倒计时结束
+
                     if(customerPaymentCode == null){
                         // 在这里打开扫码枪的扫描端口 开始循环读取扫描信息
                         try{
@@ -332,8 +352,10 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                             }
                         }catch (Exception e){
                             BetterToast.getInstance().showText(getProxyActivity(),"扫码器工作异常");
+                            LogUtil.LogException(e);
                         }
-                    }else {
+                    }
+                    else {
                         // 已经取得了用户的付款码 那么准备跳转
                         if(isOrderHasBeenPaid){
                             // 通过网络查询，发现已经支付了
@@ -376,6 +398,9 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
             final double fee = data.getDouble("actual_fee");
             this.productPriceText.setText("¥ " + Double.toString(fee));
             this.actualFee = (int) (fee * 100); // 转换 从元变成 分
+
+            // 开始扫描
+            this.startScanning();
         }else{
             // 服务器返回了错误的数据
             BetterToast.getInstance()
@@ -404,10 +429,10 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                 this.isOrderHasBeenPaid = true;
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
-                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
+//                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
             }else if(RestfulClient.ACTION_ORDER_CLOSE.equals(nextActionString)){
                 // Todo 表示订单处于关闭的状态，该如何处理写在这里
-                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
+//                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
             }
         }
     }
@@ -431,15 +456,15 @@ public class ByHippoAppDelegate extends SmartbroDelegate implements ITimerListen
                 // 表示支付已经确认，可以去烤饼了
                 if (this.orderNo != null){
                     this.isOrderHasBeenPaid = true;
-                    LogUtil.LogInfoForce("表示支付已经确认，可以去烤饼了 1111 " + this.orderNo);
+//                    LogUtil.LogInfoForce("表示支付已经确认，可以去烤饼了 1111 " + this.orderNo);
                     this.goToNextView();
                 }
             }else if(RestfulClient.ACTION_KEEP_CHECKING.equals(nextActionString)){
                 // 表示需要继续查询订单的支付状态，这个时候，什么也不用做，继续等待即可
-                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
+//                LogUtil.LogInfo("需要继续查询订单的支付状态 " + this.orderNo);
             }else if(RestfulClient.ACTION_ORDER_CLOSE.equals(nextActionString)){
                 // Todo 表示订单处于关闭的状态，该如何处理写在这里
-                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
+//                LogUtil.LogInfo("表示订单处于关闭的状态 " + this.orderNo);
             }
         }
     }

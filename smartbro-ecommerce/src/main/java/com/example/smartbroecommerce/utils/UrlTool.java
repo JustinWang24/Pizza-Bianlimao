@@ -15,7 +15,7 @@ import java.util.List;
 
 public class UrlTool {
     private static final String API_REPORT_MACHINE_STATUS = "machines/report_status";
-    private static final String API_REPORT_ORDER_COMPLETE = "switch_order_to_complete";
+    private static final String API_REPORT_ORDER_COMPLETE = "switch_order_to_complete_bianlimao";
 
     /**
      * 上报设备故障的静态方法
@@ -105,30 +105,65 @@ public class UrlTool {
     public static void reportOrderComplete(int orderId){
         // 把购物车清空
         ShoppingCart.getInstance().clear();
-//        if( orderId > 0){
-//            RestfulClient.builder()
-//                    .url(API_REPORT_ORDER_COMPLETE)
-//                    .params("order_id",Integer.toString(orderId))
-//                    .success(new ISuccess() {
-//                        @Override
-//                        public void onSuccess(String response) {
-//
-//                        }
-//                    })
-//                    .error(new IError() {
-//                        @Override
-//                        public void onError(int code, String msg) {
-//
-//                        }
-//                    })
-//                    .failure(new IFailure() {
-//                        @Override
-//                        public void onFailure() {
-//
-//                        }
-//                    })
-//                    .build()
-//                    .get();
-//        }
+        if( orderId > 0){
+            RestfulClient.builder()
+                    .url(API_REPORT_ORDER_COMPLETE)
+                    .params("order_id",Integer.toString(orderId))
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+
+                        }
+                    })
+                    .error(new IError() {
+                        @Override
+                        public void onError(int code, String msg) {
+
+                        }
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+
+                        }
+                    })
+                    .build()
+                    .get();
+        }
+    }
+
+    /**
+     * 上报订单顺利完成的方法
+     * 无论是否上报成功, 都需要把本地的数据清空
+     * @param orderNo
+     */
+    public static void reportOrderComplete(String orderNo){
+        // 把购物车清空
+        ShoppingCart.getInstance().clear();
+        if( orderNo.length() > 0){
+            RestfulClient.builder()
+                    .url(API_REPORT_ORDER_COMPLETE)
+                    .params("order_id",orderNo)
+                    .success(new ISuccess() {
+                        @Override
+                        public void onSuccess(String response) {
+
+                        }
+                    })
+                    .error(new IError() {
+                        @Override
+                        public void onError(int code, String msg) {
+
+                        }
+                    })
+                    .failure(new IFailure() {
+                        @Override
+                        public void onFailure() {
+
+                        }
+                    })
+                    .build()
+                    .get();
+        }
     }
 }

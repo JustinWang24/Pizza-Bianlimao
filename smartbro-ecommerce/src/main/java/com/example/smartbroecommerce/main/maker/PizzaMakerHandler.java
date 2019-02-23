@@ -4,6 +4,7 @@ import com.example.smartbro.net.RestfulClient;
 import com.example.smartbro.net.callback.IError;
 import com.example.smartbro.net.callback.IFailure;
 import com.example.smartbro.net.callback.ISuccess;
+import com.example.smartbroecommerce.database.MachineProfile;
 import com.example.smartbroecommerce.utils.UrlTool;
 import com.taihua.pishamachine.LogUtil;
 import com.taihua.pishamachine.MachineStatusOfMakingPizza;
@@ -142,10 +143,11 @@ public class PizzaMakerHandler extends Handler {
                     // 饼已经取走，盒子也推到位了. 从这之后，handler处于就位烤下一张的状态
                     // 通知服务器, 某个位置的饼已经出炉, ProcessingDelegate会不停的检查这个状态
                     this.setProcessStatus(MachineStatusOfMakingPizza.SUCCESS_READY_FOR_NEXT);
+                    // 表示已经烤完了, 执行订单完成需要的工作
+                    this.orderComplete();
                     // 检查是否已经是最后的一张饼了
                     if(this.isLastOneDone()){
-                        // 表示已经烤完了, 执行订单完成需要的工作
-                        this.orderComplete();
+
                     }else {
                         // 还不是最后一张饼, 把工作指示的序号加一
                         LogUtil.LogInfo("转移到烤第" + Integer.toString(this.currentTaskIndex+1) + "张饼");
@@ -187,7 +189,7 @@ public class PizzaMakerHandler extends Handler {
                     if(msg.arg1 != this.getCurrentMachineErrorCode()){
                         this.setCurrentMachineErrorCode(msg.arg1);
                         this.generalErrorHandler(msg);
-                        LogUtil.LogInfo("收到一个 MachineStatusOfMakingPizza.INFORM_ERROR_NO_BOX_AT_END 消息: " + Integer.toString(msg.arg1));
+                        this.noBoxErrorHappened(msg);
                     }
                     this.setProcessStatus(MachineStatusOfMakingPizza.INFORM_ERROR_NO_BOX_AT_END);
                     break;
@@ -237,12 +239,22 @@ public class PizzaMakerHandler extends Handler {
         // Todo 烤饼期间出现了故障, 通知Delegate做下一步的处理. 同时做好这个处理器的善后工作，包括清理定时器, 无用的进程等
     }
 
+    private void noBoxErrorHappened(Message msg){
+        LogUtil.LogInfo("收到一个 MachineStatusOfMakingPizza.INFORM_ERROR_NO_BOX_AT_END 消息: " + Integer.toString(msg.arg1));
+        UrlTool.reportMachineStatus(
+                MachineProfile.getInstance().getUuid(),
+                MachineStatusOfMakingPizza.INFORM_ERROR_NO_BOX_AT_END,
+                "没有推出盒子的报警",
+                this.currentOrderId
+        );
+    }
+
     /**
      * 订单处理完成的处理
      */
     private void orderComplete(){
         this.isLastPizzaDone = true;
-        UrlTool.reportOrderComplete(this.currentOrderId);
+//        UrlTool.reportOrderComplete(this.currentOrderId);
     }
 
     /**

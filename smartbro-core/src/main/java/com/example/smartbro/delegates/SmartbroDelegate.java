@@ -6,7 +6,6 @@ import java.util.Date;
 
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
-import io.sentry.event.Breadcrumb;
 import io.sentry.event.BreadcrumbBuilder;
 import io.sentry.event.UserBuilder;
 

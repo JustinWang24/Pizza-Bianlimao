@@ -43,9 +43,6 @@ dependencies {
     compile 'com.github.johnpersano:supertoasts:2.0'
     compile project(':pishamachine')
     compile project(':SlideToUnlockView')
-    //    compile project(':marshall-java-sdk-V1.0')
-    // 为了使用Nayax的api里面所要求的串口程序
-    //    compile 'com.fazecast:jSerialComm:1.3.11'
     // 使用Gif库
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'

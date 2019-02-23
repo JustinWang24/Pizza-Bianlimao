@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support:cardview-v7:25.4.0'
     compile 'com.android.support:multidex:1.0.3'
-    compile 'com.android.support.constraint:constraint-layout:1.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.3'
     // 使用 Fragment
     compile 'me.yokeyword:fragmentation:1.1.9'
     compile 'me.yokeyword:fragmentation-swipeback:1.1.9'
@@ -71,15 +71,10 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
     compile 'com.github.bumptech.glide:okhttp3-integration:4.0.0-RC0@aar'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
-    //    compile 'com.github.bumptech.glide:glide:3.8.0'
-    //    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    //    compile 'com.github.kongqw:AndroidSerialPort:1.0.1'
     // 事件总线依赖
     compile 'org.simple:androideventbus:1.0.5.1'
     // 实现图片圆角
-//    compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'com.makeramen:roundedimageview:2.3.0'
-
     // 异常捕获处理类
     compile 'io.sentry:sentry-android:1.7.16'
     compile 'org.slf4j:slf4j-nop:1.7.25'

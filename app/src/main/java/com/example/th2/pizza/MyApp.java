@@ -4,7 +4,7 @@ import android.app.Application;
 import com.example.smartbro.app.Smartbro;
 import com.example.smartbroecommerce.database.DatabaseManager;
 import com.example.smartbroecommerce.icon.FontSmartBroModule;
-//import com.facebook.stetho.Stetho;
+import com.facebook.stetho.Stetho;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 /**
  * Created by th2 on 2017/6/28.
@@ -28,10 +28,10 @@ public class MyApp extends Application{
 //                .withInterceptor(new DebugInterceptor("index", R.raw.test))
                 .configDone();
         DatabaseManager.getInstance().init(this);
-//        this.initStetho();
+        this.initStetho();
     }
 
-//    private void initStetho(){
-//        Stetho.initializeWithDefaults(this);
-//    }
+    private void initStetho(){
+        Stetho.initializeWithDefaults(this);
+    }
 }

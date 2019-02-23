@@ -42,12 +42,16 @@ public class HippoPaymentFailedDelegate extends SmartbroDelegate{
 
     @Override
     public void onBindView(@Nullable Bundle savedInstanceState, View rootView) {
-        Bundle args = getArguments();
-        this.productNameText.setText(getString(R.string.text_product_you_select) + args.getString("productName"));
-        this.productId = args.getLong("productId");
+//        Bundle args = getArguments();
+//        this.productNameText.setText(getString(R.string.text_product_you_select) + args.getString("productName"));
+//        this.productId = args.getLong("productId");
     }
 
     protected void backToProductList(){
-        startWithPop(new ListDelegate());
+        ListDelegate delegate = new ListDelegate();
+        Bundle arg = new Bundle();
+        arg.putInt("errorCode",0);
+        delegate.setArguments(arg);
+        startWithPop(delegate);
     }
 }
